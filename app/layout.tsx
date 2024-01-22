@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={poppins.className}>
         <main>
           {/* Navbar */}
-          <nav className="z-50 fixed top-0 flex left-0 right-0 items-center h-20 bg-black/75 shadow-md shadow-gray-600/25">
+          <nav className="z-50 fixed top-0 flex left-0 right-0 items-center h-20 bg-black/75 shadow-md shadow-gray-600/25 backdrop-blur-sm">
             <a className="ml-8 w-fit h-fit text-white" href="/">
               <h1 className="text-2xl font-semibold rounded-md border-[1px] px-2 py-1 border-cyan-300">Animeflix</h1>
             </a>
@@ -34,7 +34,7 @@ export default function RootLayout({
           {children}
 
           {/* Footer */}
-          <div className="text-sky-50 bg-gray-900 w-full p-4 text-xs">
+          <div className="text-white bg-gray-900 w-full p-4 text-xs">
             <p>
               &copy; Animeflix {new Date().getFullYear()} by&nbsp;
               <a href="https://github.com/Sodiumchloridy"><span>Sodiumchloridy</span></a>.
