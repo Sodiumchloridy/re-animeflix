@@ -1,23 +1,23 @@
-import type { Metadata } from 'next'
-import { Poppins } from 'next/font/google'
-import './globals.css'
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
+import "./globals.css";
 
 const poppins = Poppins({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-poppins',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
-  title: 'Anistream',
-  description: 'Stream anime on the go!',
-}
+  title: "Anistream",
+  description: "Stream anime on the go!",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -26,10 +26,12 @@ export default function RootLayout({
           {/* Navbar */}
           <nav className="z-50 fixed top-0 flex left-0 right-0 items-center h-20 bg-black/75 shadow-md shadow-gray-600/25 backdrop-blur-sm">
             <a className="ml-8 w-fit h-fit text-white" href="/">
-              <h1 className="text-2xl font-semibold rounded-md border-[1px] px-2 py-1 border-cyan-300">Animeflix</h1>
+              <h1 className="text-2xl font-semibold rounded-md border-[1px] px-2 py-1 border-cyan-300">
+                Animeflix
+              </h1>
             </a>
           </nav>
-            
+
           {/* Content */}
           {children}
 
@@ -37,16 +39,19 @@ export default function RootLayout({
           <div className="text-white bg-gray-900 w-full p-4 text-xs">
             <p>
               &copy; Animeflix {new Date().getFullYear()} by&nbsp;
-              <a href="https://github.com/Sodiumchloridy"><span>Sodiumchloridy</span></a>.
+              <a href="https://github.com/Sodiumchloridy">
+                <span>Sodiumchloridy</span>
+              </a>
+              .
             </p>
             <br />
             <p>
-              This site does not store any files on its server. All contents are provided 
-              by non-affiliated third parties.
+              This site does not store any files on its server. All contents are
+              provided by non-affiliated third parties.
             </p>
           </div>
         </main>
       </body>
     </html>
-  )
+  );
 }
