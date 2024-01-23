@@ -1,7 +1,6 @@
 import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import Link from "next/link";
-import axios from "axios";
 import CarouselWithContent from "./Carousel";
 
 export default async function Home() {

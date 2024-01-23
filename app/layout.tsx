@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import Image from "next/image";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,11 +25,15 @@ export default function RootLayout({
       <body className={poppins.className}>
         <main>
           {/* Navbar */}
-          <nav className="z-50 fixed top-0 flex left-0 right-0 items-center h-20 bg-black/75 shadow-md shadow-gray-600/25 backdrop-blur-sm">
+          <nav className="z-50 fixed top-0 flex left-0 right-0 items-center h-16 bg-black/75 shadow-md backdrop-blur-sm">
             <a className="ml-8 w-fit h-fit text-white" href="/">
-              <h1 className="text-2xl font-semibold rounded-md border-[1px] px-2 py-1 border-cyan-300">
-                Animeflix
-              </h1>
+              <Image
+                alt="animeflix logo"
+                width={30}
+                height={30}
+                src="/animeflix.svg"
+                unoptimized
+              />
             </a>
           </nav>
 
