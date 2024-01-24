@@ -11,8 +11,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Anistream",
-  description: "Stream anime on the go!",
+  title: "Re: Animeflix",
+  description: "Animeflix rebuilt for the n-th time",
 };
 
 export default function RootLayout({
