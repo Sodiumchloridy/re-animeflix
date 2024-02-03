@@ -10,10 +10,12 @@ export default async function WatchPage({
   const episodeSources = await gogoanime.fetchEpisodeSources(
     decodeURIComponent(params.id)
   );
-  console.log(episodeSources);
-  const sourceHD = episodeSources.sources.find(
+  let sourceHD = episodeSources.sources.find(
     (source) => source.quality === "1080p"
   );
+  if (!sourceHD) {
+    sourceHD = episodeSources.sources[0];
+  }
   return (
     <div className="w-full flex justify-center">
       <div className="w-[80%]">

@@ -10,7 +10,6 @@ export default async function AnimePage({
 }) {
   const gogoanime = new ANIME.Gogoanime();
   const animeInfo = await gogoanime.fetchAnimeInfo(params.id as string);
-  console.log(animeInfo);
   const jikanSearch = await axios.get(
     `https://api.jikan.moe/v4/anime?q=${animeInfo.title}`
   );
