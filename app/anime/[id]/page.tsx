@@ -8,27 +8,26 @@ export default async function AnimePage({
 }: {
   params: { id: string };
 }) {
+  const gogoanime = new ANIME.Gogoanime();
+  const animeInfo = await gogoanime.fetchAnimeInfo(params.id as string);
+  console.log(animeInfo);
   const jikanSearch = await axios.get(
-    `https://api.jikan.moe/v4/anime?q=${params.id}`
+    `https://api.jikan.moe/v4/anime?q=${animeInfo.title}`
   );
   const animeData = jikanSearch.data.data[0];
-  const animesaturn = new ANIME.AnimeSaturn();
-  const search = await animesaturn.search(animeData.title as string); //Pray that it returns the correct anime
-  if (search.totalResults == 0)
+
+  if (!animeInfo)
     return (
       <div>
-        An unexpected error occured and the developer is not paid enough for
-        this.
+        Sorry, an unexpected error occured, we were unable to fetch the anime.
       </div>
     );
-  const saturnAnimeInfo = await animesaturn.fetchAnimeInfo(
-    search.results[0].id
-  );
+
   return (
     <main className="min-h-screen mt-28">
       <div className="block md:flex h-fit mx-8">
         <Image
-          className="object-cover h-72 rounded-md mr-8"
+          className="h-72 w-auto rounded-md mr-8"
           src={animeData.images.webp.large_image_url as string}
           alt={animeData?.title as string}
           width={500}
@@ -47,7 +46,7 @@ export default async function AnimePage({
       </div>
       <section className="mx-4 my-8">
         <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
-          {saturnAnimeInfo?.episodes?.map((episode, index) => (
+          {animeInfo.episodes?.map((episode, index) => (
             <Link
               className="bg-gray-900 rounded-md p-3"
               key={index}

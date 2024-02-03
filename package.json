@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@consumet/extensions": "^1.5.4",
+    "@consumet/extensions": "github:consumet/consumet.ts",
     "@material-tailwind/react": "^2.1.8",
     "axios": "^1.6.5",
     "next": "14.0.4",

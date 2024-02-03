@@ -6,14 +6,18 @@ export default async function WatchPage({
 }: {
   params: { id: string };
 }) {
-  const animesaturn = new ANIME.AnimeSaturn();
-  const episodeSources = await animesaturn.fetchEpisodeSources(
+  const gogoanime = new ANIME.Gogoanime();
+  const episodeSources = await gogoanime.fetchEpisodeSources(
     decodeURIComponent(params.id)
+  );
+  console.log(episodeSources);
+  const sourceHD = episodeSources.sources.find(
+    (source) => source.quality === "1080p"
   );
   return (
     <div className="w-full flex justify-center">
       <div className="w-[80%]">
-        <VideoPlayer url={episodeSources.sources[1].url} />
+        <VideoPlayer url={sourceHD?.url as string} />
       </div>
     </div>
   );
