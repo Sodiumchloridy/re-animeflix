@@ -3,13 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import CarouselWithContent from "./Carousel";
 
+export const revalidate = 3600;
+
 export default async function Home() {
   const gogoanime = new ANIME.Gogoanime();
   const topAiring = await gogoanime.fetchTopAiring();
   const recentEpisodes = await gogoanime.fetchRecentEpisodes();
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-gray-900">
       {/* Trending Anime */}
       <CarouselWithContent />
       <div className="block lg:flex mt-8">

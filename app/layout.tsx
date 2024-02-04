@@ -41,7 +41,7 @@ export default function RootLayout({
           {children}
 
           {/* Footer */}
-          <div className="text-white bg-gray-900 w-full p-4 text-xs">
+          <div className="text-white bg-slate-900 w-full p-4 text-xs">
             <p>
               &copy; Animeflix {new Date().getFullYear()} by&nbsp;
               <a href="https://github.com/Sodiumchloridy">
