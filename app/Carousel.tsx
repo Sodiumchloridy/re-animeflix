@@ -20,7 +20,12 @@ export default function CarouselWithContent() {
     );
   }
   return (
-    <Carousel className="h-[500px]" autoplay loop placeholder={null}>
+    <Carousel
+      className="h-[50vh] lg:h-[500px]"
+      autoplay
+      loop
+      placeholder={null}
+    >
       {trendingAnime?.data.map((anime: any, index: number) => (
         <div key={index} className="relative h-full w-full">
           <Image
@@ -36,7 +41,9 @@ export default function CarouselWithContent() {
             <h1 className="font-bold text-3xl">
               {anime.attributes.canonicalTitle}
             </h1>
-            <p className="text-justify">{anime.attributes.synopsis}</p>
+            <p className="text-justify line-clamp-2 lg:line-clamp-4">
+              {anime.attributes.synopsis}
+            </p>
           </div>
         </div>
       ))}
