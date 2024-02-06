@@ -1,11 +1,11 @@
-This is an anime website project that I have built for the n-th time as it keeps breaking down. I am currently aware that certain anime return the wrong anime (off by a long shot). I am finding alternative fixes to it but the sources have been down unfortunately.
+This is an anime website project that I have built for the n-th time as a hobbyist project. All contents including but not limited to the video streams are not mine and belong to their respective owners, they are provided by unaffiliated third parties.
 
 ## Getting Started
 
 To install the required dependencies:
 
 ```bash
-npm i
+npm install
 ```
 
 To run the development server:
@@ -18,4 +18,10 @@ yarn dev
 pnpm dev
 # or
 bun dev
+```
+
+To build the project:
+
+```bash
+npm run build
 ```
