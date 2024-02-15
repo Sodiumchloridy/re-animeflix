@@ -1,15 +1,38 @@
 import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
+import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
 
 export default async function AnimePage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; episodeId: number };
 }) {
+  // Init variables
+  if (!params.episodeId) params.episodeId = 1;
   const gogoanime = new ANIME.Gogoanime();
-  const animeInfo = await gogoanime.fetchAnimeInfo(params.id as string);
-  if (!animeInfo)
+  let animeInfo;
+  let currentEpisodeSource;
+
+  try {
+    //Fetch Anime Info
+    animeInfo = await gogoanime.fetchAnimeInfo(params.id as string);
+
+    // Fetch Episode Sources
+    currentEpisodeSource = await gogoanime.fetchEpisodeSources(
+      animeInfo?.episodes?.[params.episodeId - 1].id as string
+    );
+  } catch (e) {
+    console.log(e);
+  }
+
+  // Select Video Url
+  let videoUrl =
+    currentEpisodeSource?.sources.find(
+      (source) => source.quality === "default"
+    ) || currentEpisodeSource?.sources[0];
+
+  if (!animeInfo || !videoUrl)
     return (
       <div>
         Sorry, an unexpected error occured, we were unable to fetch the anime.
@@ -17,9 +40,14 @@ export default async function AnimePage({
     );
 
   return (
-    <main className="min-h-screen mt-16">
+    <main className="min-h-screen">
+      <div className="w-full flex justify-center my-8">
+        <div className="w-[75%]">
+          <VideoPlayer url={videoUrl?.url as string} />
+        </div>
+      </div>
       {/* Anime Information Section */}
-      <div className="block sm:flex h-fit mx-8">
+      <section className="block sm:flex h-fit mx-8">
         <Image
           className="h-[40vh] object-cover rounded-md sm:h-72 sm:w-auto"
           src={animeInfo.image as string}
@@ -56,20 +84,26 @@ export default async function AnimePage({
             Synopsis: {animeInfo.description}
           </p>
         </div>
-      </div>
+      </section>
 
       {/* Episodes Section */}
       <section className="mx-4 my-8">
-        <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
-          {animeInfo.episodes?.map((episode, index) => (
-            <Link
-              className="bg-gray-900 rounded-md p-3"
-              key={index}
-              href={`/watch/${episode.id}`}
-            >
-              <p>Episode {episode.number}</p>
-            </Link>
-          ))}
+        <div className="grid gap-3 grid-cols-10">
+          {animeInfo.episodes?.map((episode: any) => {
+            const isActive: Boolean =
+              params.episodeId == (episode.number as number);
+            return (
+              <Link
+                className={`rounded-md p-3 grid place-items-center ${
+                  isActive ? "bg-gray-800" : "bg-gray-900"
+                }`}
+                key={episode.number}
+                href={`/anime/${params.id}/${episode.number}`}
+              >
+                <p>{episode.number}</p>
+              </Link>
+            );
+          })}
         </div>
       </section>
     </main>

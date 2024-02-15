@@ -19,7 +19,11 @@ export default async function Home() {
           <h1 className="text-4xl font-semibold my-4">Recent Episodes</h1>
           <div className="grid gap-5 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {recentEpisodes.results.map((anime, index) => (
-              <Link key={index} href={`anime/${anime.id}`} className="relative">
+              <Link
+                key={index}
+                href={`anime/${anime.id}/1`}
+                className="relative"
+              >
                 <Image
                   className="aspect-[3/4] object-cover rounded-md"
                   src={anime.image as string}
@@ -40,7 +44,11 @@ export default async function Home() {
         <aside className="w-full block p-4 lg:pr-12">
           <h1 className="font-semibold text-xl my-4">Top Airing This Season</h1>
           {topAiring.results.map((anime: any, index: number) => (
-            <Link className="flex my-4" key={index} href={`anime/${anime.id}`}>
+            <Link
+              className="flex my-4"
+              key={index}
+              href={`anime/${anime.id}/1`}
+            >
               <Image
                 className="object-cover h-32 w-24 flex-none rounded-l-lg"
                 src={anime.image}
