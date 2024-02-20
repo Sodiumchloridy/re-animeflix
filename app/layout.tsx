@@ -3,6 +3,8 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
 
+export const revalidate = 3600; // revalidate the data at most every hour
+
 const poppins = Poppins({
   subsets: ["latin"],
   display: "swap",
