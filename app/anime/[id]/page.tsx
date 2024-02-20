@@ -5,11 +5,13 @@ import Link from "next/link";
 
 export default async function AnimePage({
   params,
+  searchParams,
 }: {
-  params: { id: string; episodeId: number };
+  params: { id: string };
+  searchParams: any;
 }) {
   // Init variables
-  if (!params.episodeId) params.episodeId = 1;
+  if (!searchParams.ep) searchParams.ep = 1;
   const gogoanime = new ANIME.Gogoanime();
   let animeInfo;
   let currentEpisodeSource;
@@ -20,7 +22,7 @@ export default async function AnimePage({
 
     // Fetch Episode Sources
     currentEpisodeSource = await gogoanime.fetchEpisodeSources(
-      animeInfo?.episodes?.[params.episodeId - 1].id as string
+      animeInfo?.episodes?.[searchParams.ep - 1].id as string
     );
   } catch (e) {
     console.log(e);
@@ -91,14 +93,14 @@ export default async function AnimePage({
         <div className="grid gap-3 grid-cols-10">
           {animeInfo.episodes?.map((episode: any) => {
             const isActive: Boolean =
-              params.episodeId == (episode.number as number);
+              searchParams.ep == (episode.number as number);
             return (
               <Link
                 className={`rounded-md p-3 grid place-items-center ${
                   isActive ? "bg-gray-800" : "bg-gray-900"
                 }`}
                 key={episode.number}
-                href={`/anime/${params.id}/${episode.number}`}
+                href={`/anime/${params.id}?ep=${episode.number}`}
               >
                 <p>{episode.number}</p>
               </Link>
