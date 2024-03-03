@@ -28,7 +28,7 @@ export default async function Home() {
                   height={500}
                   unoptimized
                 />
-                <h2 className="text-xs line-clamp-2 mt-1">
+                <h2 className="text-sm line-clamp-2 mt-1">
                   {anime.title as string}
                 </h2>
               </Link>
