@@ -1,4 +1,4 @@
-An anime discovery, streaming site. Ad-free. Built with NextJS and Tailwind CSS. All contents including but not limited to the video streams are not mine and belong to their respective owners, they are provided by unaffiliated third parties.
+An anime discovery, streaming site. Ad-free. And of course, does not comply to DMCA. Built with NextJS and Tailwind CSS. Due to legal reasons, this site does not store any copyrighted files on its server. All contents are provided by non-affiliated third parties.
 
 ## Getting Started
 
