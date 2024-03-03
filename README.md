@@ -1,4 +1,4 @@
-This is an anime website project that I have built for the n-th time as a hobbyist project. All contents including but not limited to the video streams are not mine and belong to their respective owners, they are provided by unaffiliated third parties.
+An anime discovery, streaming site. Ad-free. Built with NextJS and Tailwind CSS. All contents including but not limited to the video streams are not mine and belong to their respective owners, they are provided by unaffiliated third parties.
 
 ## Getting Started
 
