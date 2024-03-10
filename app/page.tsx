@@ -43,7 +43,7 @@ export default async function Home() {
                 </aside>
 
                 {/* Top Airing */}
-                <aside className="w-full p-4 mx-auto xl:max-w-[40vw] lg:pr-12">
+                <aside className="w-max p-4 mx-auto lg:pr-12 xl:max-w-[40vw] xl:w-full">
                     <h1 className="font-semibold text-xl my-4">
                         Top Airing This Season
                     </h1>
