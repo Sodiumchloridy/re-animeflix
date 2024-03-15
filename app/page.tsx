@@ -13,10 +13,11 @@ export default async function Home() {
         <main className="min-h-screen bg-gray-900">
             {/* Trending Anime */}
             <CarouselWithContent />
+
             <div className="block xl:flex mt-8 w-auto">
                 {/* Recent Episodes */}
                 <aside className="mx-4 lg:mx-12">
-                    <h1 className="text-4xl font-semibold my-4">
+                    <h1 className="text-3xl font-semibold my-4">
                         Recent Episodes
                     </h1>
                     <div className="grid gap-5 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -43,10 +44,8 @@ export default async function Home() {
                 </aside>
 
                 {/* Top Airing */}
-                <aside className="w-max p-4 mx-auto lg:pr-12 xl:max-w-[40vw] xl:w-full">
-                    <h1 className="font-semibold text-xl my-4">
-                        Top Airing This Season
-                    </h1>
+                <aside className="w-max pb-4 mx-auto lg:pr-12 xl:max-w-[40vw] xl:w-full">
+                    <h1 className="font-semibold text-3xl my-4">Top Airing</h1>
                     {topAiring.results.map((anime: any, index: number) => (
                         <Link
                             className="flex my-4"
