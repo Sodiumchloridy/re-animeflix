@@ -46,13 +46,15 @@ export default function CarouselWithContent() {
                         priority
                         unoptimized
                     />
-                    <div className="absolute bottom-2 left-2 m-4">
-                        <h1 className="font-bold text-3xl">
-                            {anime.attributes.canonicalTitle}
-                        </h1>
-                        <p className="text-justify line-clamp-2 lg:line-clamp-4">
-                            {anime.attributes.synopsis}
-                        </p>
+                    <div className="absolute bottom-0 w-full h-[35%] bg-black/80 lg:h-[30%]">
+                        <div className="relative bottom-2 px-4 m-4">
+                            <h1 className="font-bold text-2xl">
+                                {anime.attributes.canonicalTitle}
+                            </h1>
+                            <p className="text-justify line-clamp-2 lg:line-clamp-3 text-sm">
+                                {anime.attributes.synopsis}
+                            </p>
+                        </div>
                     </div>
                 </div>
             ))}

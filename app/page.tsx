@@ -16,7 +16,7 @@ export default async function Home() {
 
             <div className="block xl:flex mt-8 w-auto">
                 {/* Recent Episodes */}
-                <aside className="mx-4 lg:mx-12">
+                <aside className="mx-8 lg:mx-12">
                     <h1 className="text-3xl font-semibold my-4">
                         Recent Episodes
                     </h1>
@@ -43,8 +43,8 @@ export default async function Home() {
                     </div>
                 </aside>
 
-                {/* Top Airing */}
-                <aside className="w-max pb-4 mx-auto lg:pr-12 xl:max-w-[40vw] xl:w-full">
+                {/* Top Airing TODO */}
+                <aside className="w-full pb-4 px-8 lg:pl-0 lg:pr-12 xl:max-w-[40vw]">
                     <h1 className="font-semibold text-3xl my-4">Top Airing</h1>
                     {topAiring.results.map((anime: any, index: number) => (
                         <Link
