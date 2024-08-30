@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-screen">
       <body className={`${poppins.className} text-white bg-slate-900 h-screen`}>
-        <main className="bg-black flex flex-col">
+        <main className="bg-black flex flex-col min-h-screen">
           {/* Navbar */}
           <nav className="z-50 fixed top-0 left-0 right-0 h-16 flex items-center bg-black/75 shadow-md backdrop-blur-sm">
             <a href="/">
