@@ -47,13 +47,13 @@ export default async function AnimePage({
         );
 
     return (
-        <main className="min-h-screen">
+        <main className="min-h-screen bg-black">
             <div className="w-full flex justify-center my-16 bg-gray-900">
                 <VideoPlayer url={videoUrl?.url as string} />
             </div>
 
             {/* Anime Information Section */}
-            <section className="block sm:flex h-fit px-16">
+            <section className="block sm:flex h-fit px-16 text-white">
                 <Image
                     className="h-[40vh] object-cover rounded-md sm:h-72 sm:w-auto"
                     src={animeInfo.image as string}
@@ -103,8 +103,8 @@ export default async function AnimePage({
                             searchParams.ep == (episode.number as number);
                         return (
                             <Link
-                                className={`rounded-md p-3 grid place-items-center ${
-                                    isActive ? "bg-gray-800" : "bg-gray-900"
+                                className={`rounded-md p-3 grid place-items-center mb-10 ${
+                                    isActive ? "bg-red-900" : "bg-red-600"
                                 }`}
                                 key={episode.number}
                                 href={`/anime/${params.id}?ep=${episode.number}`}
