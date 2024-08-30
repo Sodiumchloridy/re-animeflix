@@ -1,10 +1,11 @@
 import { verifyPassword, generateToken } from "../../../../lib/auth";
 import { NextResponse } from "next/server";
-import client from "../../../../lib/mongodb";
+import clientPromise from "../../../../lib/mongodb";
 import { cookies } from 'next/headers'
 
 export async function POST(req) {
   try {
+    const client = await clientPromise;
     const db = client.db("re-animeflix");
     const usersCollection = db.collection("users");
 

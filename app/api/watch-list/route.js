@@ -1,10 +1,11 @@
-import client from "../../../lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import { cookies } from 'next/headers'
 import { verifyToken } from "../../../lib/auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req) {
+export async function GET() {
   try {
+    const client = await clientPromise;
     const db = client.db("re-animeflix");
     const usersCollection = db.collection("users");
 
@@ -13,7 +14,7 @@ export async function GET(req) {
 
     if (!token) {
       return NextResponse.json(
-        { message: "Login/Authorization token required" },
+        { message: "Login required" },
         { status: 401 }
       );
     }
