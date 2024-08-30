@@ -23,9 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.className} text-white bg-slate-900`}>
-        <main className="bg-black">
+    <html lang="en" className="h-screen">
+      <body className={`${poppins.className} text-white bg-slate-900 h-screen`}>
+        <main className="bg-black flex flex-col">
           {/* Navbar */}
           <nav className="z-50 fixed top-0 left-0 right-0 h-16 flex items-center bg-black/75 shadow-md backdrop-blur-sm">
             <a href="/">
@@ -68,7 +68,7 @@ export default function RootLayout({
           {children}
 
           {/* Footer */}
-          <div className="text-black bg-gray-300 w-full p-4 text-sm grid place-items-center">
+          <div className="text-black bg-gray-300 w-full p-4 text-sm grid place-items-center mt-auto">
             <p>
               &copy; Animeflix {new Date().getFullYear()} by&nbsp;
               <a href="https://github.com/Sodiumchloridy">

@@ -10,7 +10,7 @@ export default async function Home() {
     const topAiring = await gogoanime.fetchTopAiring();
     const recentEpisodes = await gogoanime.fetchRecentEpisodes();
     return (
-        <main className="min-h-screen bg-gray-900">
+        <main className="bg-gray-900">
             {/* Trending Anime */}
             <CarouselWithContent />
 

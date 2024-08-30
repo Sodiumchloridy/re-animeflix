@@ -8,7 +8,7 @@ export default async function Search({ searchParams }: { searchParams: any }) {
   const searchResponse = await gogoanime.search(query);
 
   return (
-    <main className="w-[90%] mx-auto min-h-[200px]">
+    <main className="w-[90%] mx-auto min-h-[200px] mb-10">
       <h1 className="mt-16 mb-4 text-xl">
         Found {searchResponse.results.length} Results.
       </h1>
