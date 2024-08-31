@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
+import Profile from "@/components/Profile/Profile";
 
 export const revalidate = 3600; // revalidate the data at most every hour
 
@@ -28,7 +30,7 @@ export default function RootLayout({
         <main className="bg-black flex flex-col min-h-screen">
           {/* Navbar */}
           <nav className="z-50 fixed top-0 left-0 right-0 h-16 flex items-center bg-black/75 shadow-md backdrop-blur-sm">
-            <a href="/">
+            <Link href="/">
               <Image
                 className="ml-8"
                 alt="animeflix logo"
@@ -37,7 +39,7 @@ export default function RootLayout({
                 src="/animeflix.svg"
                 unoptimized
               />
-            </a>
+            </Link>
             {/* Search Box */}
             <form
               action="/search"
@@ -62,6 +64,11 @@ export default function RootLayout({
                 placeholder="Search your anime here.."
               ></input>
             </form>
+              
+              {/* Auth Buttons */}
+              
+              <Profile/>
+              
           </nav>
 
           {/* Content */}

@@ -1,7 +1,6 @@
 import { verifyPassword, generateToken } from "../../../../lib/auth";
 import { NextResponse } from "next/server";
 import clientPromise from "../../../../lib/mongodb";
-import { cookies } from 'next/headers'
 
 export async function POST(req) {
   try {
@@ -32,20 +31,16 @@ export async function POST(req) {
     }
 
     const token = generateToken(user);
-    // Set the token in a cookie maxAge is in seconds
-    cookies().set({
-      
-        name: 'token',
-        value: token,
-        httpOnly: true,
-        path: '/',
-        maxAge: 3600,
-    })
 
-    return NextResponse.json(
+    // Set the token in a Set-Cookie header with SameSite attribute
+    const response = NextResponse.json(
       { message: "Login successful", token },
       { status: 200 }
     );
+
+    response.headers.set('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax`);
+
+    return response;
 
   } catch (error) {
     console.error("Failed to log in:", error);
