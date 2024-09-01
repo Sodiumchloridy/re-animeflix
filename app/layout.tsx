@@ -26,9 +26,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthContext>
-      <html lang="en" className="h-screen">
-        <body className={`${poppins.className} text-white bg-slate-900 h-screen`}>
+    <html lang="en" className="h-screen">
+      <AuthContext>
+        <body
+          className={`${poppins.className} text-white bg-slate-900 h-screen`}
+        >
           <main className="bg-black flex flex-col min-h-screen">
             {/* Navbar */}
             <nav className="z-50 fixed top-0 left-0 right-0 h-16 flex items-center bg-black/75 shadow-md backdrop-blur-sm">
@@ -65,11 +67,8 @@ export default function RootLayout({
                   placeholder="Search your anime here.."
                 ></input>
               </form>
-      
-                {/* Auth Buttons */}
-      
-                <Profile/>
-      
+              {/* Auth Buttons */}
+              <Profile />
             </nav>
             {/* Content */}
             {children}
@@ -83,13 +82,13 @@ export default function RootLayout({
                 .
               </p>
               <p>
-                This site does not store any files on its server. All contents are
-                provided by non-affiliated third parties.
+                This site does not store any files on its server. All contents
+                are provided by non-affiliated third parties.
               </p>
             </div>
           </main>
         </body>
-      </html>
-    </AuthContext>
+      </AuthContext>
+    </html>
   );
 }
