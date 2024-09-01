@@ -7,21 +7,24 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const result = await signIn("credentials", {
       redirect: false,
       username,
       password,
     });
-
     if (result.error) {
-      setError(result.error);
+      setError("Invalid username or password");
     } else {
       router.push("/");
+      setLoading(false);                          
+
     }
   };
 
@@ -44,8 +47,8 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md text-black"
         />
-        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">
-          Login
+        <button type="submit" disabled={loading} className="bg-blue-500 text-white py-2 px-4 rounded-md">
+          {loading ? "Loading..." : "Login"}
         </button>
       </form>
     </div>
