@@ -1,3 +1,4 @@
+import WatchListButton from "@/components/WatchListButton/WatchListButton";
 import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,18 +16,22 @@ export default async function Search({ searchParams }: { searchParams: any }) {
       <div className="grid grid-cols-8 gap-2">
         {searchResponse.results.map((anime) => {
           return (
-            <Link key={anime.id} href={`/anime/${anime.id}?ep=1`}>
-              <Image
-                className="aspect-[3/4] rounded-md"
-                src={anime.image as string}
-                alt={anime.title as string}
-                width={300}
-                height={400}
-                unoptimized
-              />
-              <h1 className="line-clamp-3">{anime.title as string}</h1>
-              <h1>{anime.releaseDate}</h1>
-            </Link>
+            <div key={anime.id}>
+              <Link href={`/anime/${anime.id}?ep=1`}>
+                <Image
+                  className="aspect-[3/4] rounded-md"
+                  src={anime.image as string}
+                  alt={anime.title as string}
+                  width={300}
+                  height={400}
+                  unoptimized
+                />
+                <h1 className="line-clamp-3">{anime.title as string}</h1>
+                <h1>{anime.releaseDate}</h1>
+              </Link>
+              <WatchListButton id={anime.id} title={anime.title as string} />
+
+            </div>
           );
         })}
       </div>

@@ -11,7 +11,6 @@ export const fetchWatchList = async () => {
     if (!session) {
       return [];
     }
-    console.log("action session user:", session);
     // Connect to MongoDB
     const client = await clientPromise;
     const db = client.db("re-animeflix");
@@ -19,7 +18,6 @@ export const fetchWatchList = async () => {
 
     // Fetch the user from the database
     const user = await usersCollection.findOne({ username: session.user.name });
-    console.log("Action User:", user);
     if (!user || !user.animes) {
       return [];
     }
@@ -33,7 +31,6 @@ export const fetchWatchList = async () => {
         return searchResponse.results[0]; // Assuming the first result is the correct one
       })
     );
-    console.log("Watch list:", animes);
     return animes;
 
   } catch (err) {

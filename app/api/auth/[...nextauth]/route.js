@@ -19,7 +19,9 @@ export const authOptions = {
       async authorize(credentials) {
         const client = await clientPromise;
         const db = client.db("re-animeflix");
-        const user = await db.collection("users").findOne({ username: credentials.username });
+        const user = await db
+          .collection("users")
+          .findOne({ username: credentials.username });
 
         if (user && bcrypt.compareSync(credentials.password, user.password)) {
           return { id: user._id, name: user.username, email: user.email };
@@ -32,21 +34,33 @@ export const authOptions = {
     signIn: "/auth/login",
     error: "/auth/error",
   },
-  // callbacks: {
-  //   async jwt({ token, account }) {
-  //     // Persist the OAuth access_token to the token right after signin
-  //     if (account) {
-  //       token.accessToken = account.access_token
-  //     }
-  //     return token
-  //   },
-  //   async session({ session, token, user }) {
-  //     // Send properties to the client, like an access_token from a provider.
-  //     session.accessToken = token.accessToken
-  //     session.user.id = token.id
-  //     return session
-  //   }
-  // },
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+    async session({ session, token }) {
+      // Send properties to the client, like an access_token from a provider.
+      try {
+        const client = await clientPromise;
+        const db = client.db("re-animeflix");
+        const usersCollection = db.collection("users");
+
+        const user = await usersCollection.findOne({
+          username: session.user.name,
+        });
+
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        const watchList = user.animes
+        return { ...session, ...token, watchList };
+      } catch (error) {
+        console.error("Failed to add anime to watch list:", error);
+        throw new Error("Failed to add anime to watch list");
+      }
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
 };
 

@@ -28,12 +28,12 @@ export default function Profile() {
               onClick={() => setShowDropdown(!showDropdown)}
               className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
             >
-              <Link
+              <a
                 href="/watch-list"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
               >
                 Watch List
-              </Link>
+              </a>
               <button
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
                 onClick={() => {
