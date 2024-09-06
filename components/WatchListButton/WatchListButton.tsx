@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { handleAddToList, handleRemoveFromList } from "./action";
 import { useSession } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 
 type Anime = {
   id: string;
@@ -19,6 +20,8 @@ export default function WatchListButton({
   const { data: session, status } = useSession();
   const [isInWatchList, setIsInWatchList] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname()
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -26,6 +29,7 @@ export default function WatchListButton({
         (anime: Anime) => anime.id === id
       );
       setIsInWatchList(isAdded);
+      console.log(session?.watchList);
     }
   }, [status, id, session]);
 
@@ -37,6 +41,10 @@ export default function WatchListButton({
       }
       await handleAddToList(id, title);
       setIsInWatchList(true);
+      // Only refresh on watch-list page by checking routes name
+      if (pathname === "/watch-list") {
+        router.refresh(); // Refresh page if on the watch list page
+      }
     } catch (error) {
       setError("Failed to add anime");
     }
@@ -46,6 +54,10 @@ export default function WatchListButton({
     try {
       await handleRemoveFromList(id);
       setIsInWatchList(false);
+      // Only refresh on watch-list page by checking routes name
+      if (pathname === "/watch-list") {
+        router.refresh(); // Refresh page if on the watch list page
+      }
     } catch (error) {
       setError("Failed to remove anime");
     }
