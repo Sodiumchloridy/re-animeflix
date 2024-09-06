@@ -22,9 +22,9 @@ export default function WatchListButton({
 
   useEffect(() => {
     if (status === "authenticated") {
-      const isAdded = session?.watchList.some(
+      const isAdded = (session?.watchList ?? []).some(
         (anime: Anime) => anime.id === id
-      ); // watchList will have error no effect though
+      );
       setIsInWatchList(isAdded);
     }
   }, [status, id, session]);

@@ -28,6 +28,8 @@ export default function CarouselWithContent() {
             autoplay
             loop
             placeholder={null}
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
         >
             {trendingAnime?.data.map((anime: any, index: number) => (
                 <div key={index} className="relative h-full w-full">

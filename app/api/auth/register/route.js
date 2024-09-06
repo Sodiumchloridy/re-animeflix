@@ -3,10 +3,14 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
+    console.log("Register user");
     const { username, password } = await req.json();
+    console.log("Username" + username);
+    console.log("Password " + password);
     const client = await clientPromise;
+    console.log("Client" + client);
     const db = client.db("re-animeflix");
-
+    console.log(db);
     const existingUser = await db.collection("users").findOne({ username });
 
     if (existingUser) {
