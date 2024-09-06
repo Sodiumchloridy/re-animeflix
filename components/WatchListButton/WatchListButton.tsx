@@ -29,7 +29,7 @@ export default function WatchListButton({
         (anime: Anime) => anime.id === id
       );
       setIsInWatchList(isAdded);
-      console.log(session?.watchList);
+      // console.log(session?.watchList);
     }
   }, [status, id, session]);
 
@@ -40,11 +40,12 @@ export default function WatchListButton({
         return;
       }
       await handleAddToList(id, title);
-      setIsInWatchList(true);
       // Only refresh on watch-list page by checking routes name
       if (pathname === "/watch-list") {
         router.refresh(); // Refresh page if on the watch list page
       }
+      setTimeout(() => setIsInWatchList(true), 2000);
+      
     } catch (error) {
       setError("Failed to add anime");
     }
@@ -53,11 +54,12 @@ export default function WatchListButton({
   const handleRemove = async () => {
     try {
       await handleRemoveFromList(id);
-      setIsInWatchList(false);
       // Only refresh on watch-list page by checking routes name
       if (pathname === "/watch-list") {
         router.refresh(); // Refresh page if on the watch list page
       }
+      setTimeout(() => setIsInWatchList(false), 2000);
+
     } catch (error) {
       setError("Failed to remove anime");
     }
