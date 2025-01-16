@@ -1,8 +1,8 @@
 'use server';
 import { ANIME } from '@consumet/extensions';
-import clientPromise from "@/src/lib/mongodb";
+import clientPromise from "@/app/lib/mongodb";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from '@/src/lib/authOptions';
+import { authOptions } from '@/app/lib/authOptions';
 
 export const fetchWatchList = async () => {
   try {
