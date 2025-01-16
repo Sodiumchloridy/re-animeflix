@@ -1,8 +1,8 @@
 import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import Link from "next/link";
-import CarouselWithContent from "./Carousel";
-import WatchListButton from "@/components/WatchListButton/WatchListButton";
+import CarouselWithContent from "./_components/Carousel";
+import WatchListButton from "@/app/_components/WatchListButton/WatchListButton";
 
 export const revalidate = 3600; // revalidate the data at most every hour
 

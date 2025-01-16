@@ -2,8 +2,8 @@ import { fetchWatchList } from "./action";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/authOptions";
-import WatchListButton from "@/components/WatchListButton/WatchListButton";
+import { authOptions } from "@/src/lib/authOptions";
+import WatchListButton from "@/app/_components/WatchListButton/WatchListButton";
 
 export default async function WatchList() {
   const session = await getServerSession(authOptions as any);

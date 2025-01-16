@@ -1,8 +1,8 @@
 'use server';
 
-import clientPromise from '@/lib/mongodb';
+import clientPromise from '@/src/lib/mongodb';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/authOptions';
+import { authOptions } from '@/src/lib/authOptions';
 
 export const handleAddToList = async (id, title) => {
   try {

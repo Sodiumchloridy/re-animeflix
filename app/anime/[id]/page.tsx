@@ -2,7 +2,7 @@ import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
-import WatchListButton from "@/components/WatchListButton/WatchListButton";
+import WatchListButton from "@/app/_components/WatchListButton/WatchListButton";
 
 export default async function AnimePage({
   params,
