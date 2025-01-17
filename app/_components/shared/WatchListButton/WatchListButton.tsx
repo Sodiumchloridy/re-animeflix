@@ -32,7 +32,6 @@ export default function WatchListButton({
         (anime: Anime) => anime.id === id
       );
       setIsInWatchList(isAdded);
-      // console.log(session?.watchList);
     }
   }, [status, id, session]);
 

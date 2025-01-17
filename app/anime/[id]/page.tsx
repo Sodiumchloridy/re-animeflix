@@ -17,10 +17,7 @@ export default async function AnimePage({
 
   const currentEpisodeSource = await getEpisodeSources(
     animeInfo.episodes?.[Number(ep) - 1].id as string
-    )
-    .catch((e) => {
-      console.log(e);
-    });
+  )
 
   // Select Video Url
   const videoUrl =
