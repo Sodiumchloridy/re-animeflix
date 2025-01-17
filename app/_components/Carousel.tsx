@@ -24,12 +24,12 @@ export default function CarouselWithContent() {
 
     return (
         <Carousel
-            className="h-[50vh] lg:h-[500px]"
-            autoplay
-            loop
-            placeholder={null}
-            onPointerEnterCapture={() => {}}
-            onPointerLeaveCapture={() => {}}
+            {...{
+                className: "h-[50vh] lg:h-[500px]",
+                autoplay: true,
+                loop: true,
+                placeholder: null
+            } as any}
         >
             {trendingAnime?.data.map((anime: any, index: number) => (
                 <div key={index} className="relative h-full w-full">

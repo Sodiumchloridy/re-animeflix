@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,15 +12,16 @@
     "@auth/mongodb-adapter": "^3.4.2",
     "@consumet/extensions": "github:consumet/consumet.ts",
     "@material-tailwind/react": "^2.1.8",
+    "artplayer": "^5.2.1",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
+    "hls.js": "^1.5.19",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
     "next": "^15.1.4",
     "next-auth": "^4.24.7",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-player": "^2.14.1"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

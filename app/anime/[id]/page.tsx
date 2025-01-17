@@ -9,30 +9,23 @@ export default async function AnimePage({
   searchParams,
 }: {
   params: { id: string };
-  searchParams: any;
+    searchParams: { ep: number };
 }) {
-  // Init variables
-  if (!searchParams.ep) searchParams.ep = 1;
+  const { ep = 1 }: { ep: number } = await searchParams;
+  const { id } = await params;
   const gogoanime = new ANIME.Gogoanime();
-  let animeInfo;
-  let currentEpisodeSource;
+  const animeInfo = await gogoanime.fetchAnimeInfo(id)
 
-  //Fetch Anime Info
-  animeInfo = await gogoanime.fetchAnimeInfo(params.id as string).catch((e) => {
-    console.log(e);
-  });
-
-  // Fetch Episode Sources
-  currentEpisodeSource = await gogoanime
+  const currentEpisodeSource = await gogoanime
     .fetchEpisodeSources(
-      animeInfo?.episodes?.[searchParams.ep - 1].id as string
+      animeInfo.episodes?.[ep - 1].id as string
     )
     .catch((e) => {
       console.log(e);
     });
 
   // Select Video Url
-  let videoUrl =
+  const videoUrl =
     currentEpisodeSource?.sources.find(
       (source) => source.quality === "default"
     ) || currentEpisodeSource?.sources[0];
@@ -47,7 +40,7 @@ export default async function AnimePage({
   return (
     <main className="bg-black">
       <div className="w-full flex justify-center my-16 bg-gray-900">
-        <VideoPlayer url={videoUrl?.url as string} />
+        <VideoPlayer option={{ url: videoUrl.url as string }} />
       </div>
 
       {/* Anime Information Section */}
@@ -68,7 +61,7 @@ export default async function AnimePage({
           <p>Season: {animeInfo.type}</p>
           <p>
             Type:{" "}
-            {animeInfo.subOrDub?.toUpperCase() || animeInfo.hasSub
+            {animeInfo.hasSub
               ? "SUB"
               : "DUB"}
           </p>
@@ -100,14 +93,14 @@ export default async function AnimePage({
         <div className="grid gap-3 grid-cols-10">
           {animeInfo.episodes?.map((episode: any) => {
             const isActive: Boolean =
-              searchParams.ep == (episode.number as number);
+              ep == (episode.number as number);
             return (
               <Link
                 className={`rounded-md p-3 grid place-items-center  ${
                   isActive ? "bg-red-900" : "bg-red-600"
                 }`}
                 key={episode.number}
-                href={`/anime/${params.id}?ep=${episode.number}`}
+                href={`/anime/${id}?ep=${episode.number}`}
               >
                 <p>{episode.number}</p>
               </Link>
