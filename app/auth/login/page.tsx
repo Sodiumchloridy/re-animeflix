@@ -8,10 +8,10 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setLoading(true);
     const result = await signIn("credentials", {
@@ -19,11 +19,11 @@ export default function LoginPage() {
       username,
       password,
     });
-    if (result.error) {
+    if (result?.error) {
       setError("Invalid username or password");
     } else {
       router.push("/");
-      setLoading(false);                          
+      setLoading(false);
 
     }
   };

@@ -1,10 +1,10 @@
-import clientPromise from "../../../../lib/mongodb";
+import clientPromise from "@/app/lib/mongodb";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST(request: Request) {
   try {
     console.log("Register user");
-    const { username, password } = await req.json();
+    const { username, password } = await request.json();
     console.log("Username" + username);
     console.log("Password " + password);
     const client = await clientPromise;

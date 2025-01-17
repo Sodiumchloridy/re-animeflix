@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsxImportSource": "react",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -27,7 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/WatchListButton/action.js"
+    "app/_components/shared/WatchListButton/action.js"
   ],
   "exclude": ["node_modules"]
 }

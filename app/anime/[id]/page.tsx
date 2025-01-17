@@ -1,38 +1,26 @@
-import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
-import WatchListButton from "@/components/WatchListButton/WatchListButton";
+import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
+import { getAnimeInfo, getEpisodeSources } from "@/app/lib/anime-client";
 
 export default async function AnimePage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: any;
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ ep?: string }>;
 }) {
-  // Init variables
-  if (!searchParams.ep) searchParams.ep = 1;
-  const gogoanime = new ANIME.Gogoanime();
-  let animeInfo;
-  let currentEpisodeSource;
+  const { ep = "1" } = await searchParams;
+  const { id } = await params;
+  const animeInfo = await getAnimeInfo(id)
 
-  //Fetch Anime Info
-  animeInfo = await gogoanime.fetchAnimeInfo(params.id as string).catch((e) => {
-    console.log(e);
-  });
-
-  // Fetch Episode Sources
-  currentEpisodeSource = await gogoanime
-    .fetchEpisodeSources(
-      animeInfo?.episodes?.[searchParams.ep - 1].id as string
-    )
-    .catch((e) => {
-      console.log(e);
-    });
+  const currentEpisodeSource = await getEpisodeSources(
+    animeInfo.episodes?.[Number(ep) - 1].id as string
+  )
 
   // Select Video Url
-  let videoUrl =
+  const videoUrl =
     currentEpisodeSource?.sources.find(
       (source) => source.quality === "default"
     ) || currentEpisodeSource?.sources[0];
@@ -45,13 +33,13 @@ export default async function AnimePage({
     );
 
   return (
-    <main className="bg-black">
+    <main className="bg-black mt-0">
       <div className="w-full flex justify-center my-16 bg-gray-900">
-        <VideoPlayer url={videoUrl?.url as string} />
+        <VideoPlayer option={{ url: videoUrl.url as string }} />
       </div>
 
       {/* Anime Information Section */}
-      <section className="block sm:flex h-fit px-16 text-white">
+      <section className="block sm:flex h-fit px-8 text-white">
         <Image
           className="h-[40vh] object-cover rounded-md sm:h-72 sm:w-auto"
           src={animeInfo.image as string}
@@ -68,7 +56,7 @@ export default async function AnimePage({
           <p>Season: {animeInfo.type}</p>
           <p>
             Type:{" "}
-            {animeInfo.subOrDub?.toUpperCase() || animeInfo.hasSub
+            {animeInfo.hasSub
               ? "SUB"
               : "DUB"}
           </p>
@@ -95,19 +83,19 @@ export default async function AnimePage({
       </section>
 
       {/* Episodes Section */}
-      <section className="px-16 mb-10">
+      <section className="px-8 mb-10">
         <h1 className="text-3xl my-4">Episodes</h1>
-        <div className="grid gap-3 grid-cols-10">
+        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(100px,1fr))]">
           {animeInfo.episodes?.map((episode: any) => {
             const isActive: Boolean =
-              searchParams.ep == (episode.number as number);
+              Number(ep) == (episode.number as number);
             return (
               <Link
-                className={`rounded-md p-3 grid place-items-center  ${
+                className={`hover:scale-105 transition-transform duration-200 rounded-md p-3 grid place-items-center  ${
                   isActive ? "bg-red-900" : "bg-red-600"
                 }`}
                 key={episode.number}
-                href={`/anime/${params.id}?ep=${episode.number}`}
+                href={`/anime/${id}?ep=${episode.number}`}
               >
                 <p>{episode.number}</p>
               </Link>

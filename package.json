@@ -3,35 +3,41 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.4.2",
-    "@consumet/extensions": "github:consumet/consumet.ts",
+    "@consumet/extensions": "github:consumet/extensions",
     "@material-tailwind/react": "^2.1.8",
+    "artplayer": "^5.2.1",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
+    "hls.js": "^1.5.19",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
-    "next": "^14.2.7",
+    "next": "^15.1.4",
     "next-auth": "^4.24.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-player": "^2.14.1"
+    "react-icons": "^5.4.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
+    "@types/cookie": "^0.6.0",
+    "@types/node": "^20.17.14",
+    "@types/prop-types": "^15.7.14",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "^14.2.7",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5",
+    "vitest": "^3.0.1"
   }
 }

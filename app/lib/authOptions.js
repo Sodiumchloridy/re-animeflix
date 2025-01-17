@@ -3,7 +3,6 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "./mongodb";
 import bcrypt from "bcryptjs";
 
-
 const authOptions = {
     adapter: MongoDBAdapter(clientPromise),
     session: {

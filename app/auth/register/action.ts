@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 
-export const handleSubmit = async (prevState, formData) => {
+export const handleSubmit = async (prevState: any, formData: { get: (arg0: string) => any; }) => {
   const username = formData.get("username");
   const password = formData.get("password");
 
@@ -22,6 +22,6 @@ export const handleSubmit = async (prevState, formData) => {
     redirect("/auth/login");
   } else {
     const { message } = await res.json();
-    return {message: message};
+    return { message: message };
   }
 };

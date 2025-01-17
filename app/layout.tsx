@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
-import Profile from "@/components/Profile/Profile";
-import AuthContext from "./AuthContext";
+import Profile from "@/app/_components/shared/Profile/Profile";
+import AuthContext from "./_components/AuthContext";
 
 export const revalidate = 3600; // revalidate the data at most every hour
 
@@ -73,12 +73,10 @@ export default function RootLayout({
             {/* Content */}
             {children}
             {/* Footer */}
-            <div className="text-black bg-gray-300 w-full p-4 text-sm grid place-items-center mt-auto">
+            <div className="text-white bg-slate-900 w-full p-8 text-sm grid place-items-center">
               <p>
                 &copy; Animeflix {new Date().getFullYear()} by&nbsp;
-                <a href="https://github.com/Sodiumchloridy">
-                  <span className="text-blue-500">Sodiumchloridy</span>
-                </a>
+                <a className="text-blue-500 hover:text-blue-600" href="https://github.com/Sodiumchloridy">Sodiumchloridy</a>
                 .
               </p>
               <p>
