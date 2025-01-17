@@ -1,22 +1,20 @@
-import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import Link from "next/link";
 import CarouselWithContent from "./_components/Carousel";
-import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
 import AnimeCard from "./_components/AnimeCard";
+import { fetchRecentEpisodes, fetchTopAiring } from "./lib/anime-client";
 
 export const revalidate = 3600; // revalidate the data at most every hour
 
 export default async function Home() {
-  const gogoanime = new ANIME.Gogoanime();
-  const topAiring = await gogoanime.fetchTopAiring();
-  const recentEpisodes = await gogoanime.fetchRecentEpisodes();
+  const topAiring = await fetchTopAiring();
+  const recentEpisodes = await fetchRecentEpisodes();
   return (
     <main className="bg-gray-900">
       {/* Trending Anime */}
       <CarouselWithContent />
 
-      <div className="block xl:flex mt-8 w-auto">
+      <div className="block xl:flex mt-4 w-auto">
         {/* Recent Episodes */}
         <aside className="w-full px-4">
           <h1 className="text-3xl font-semibold my-4">Recent Episodes</h1>
@@ -27,7 +25,7 @@ export default async function Home() {
           </div>
         </aside>
 
-        {/* Top Airing TODO */}
+        {/* Top Airing */}
         <aside className="w-full pb-4 px-8 lg:pl-0 lg:pr-12 xl:max-w-[40vw]">
           <h1 className="font-semibold text-3xl my-4">Top Airing</h1>
           {topAiring.results.map((anime: any, index: number) => (
@@ -44,7 +42,7 @@ export default async function Home() {
               <div className="w-full p-2 bg-blue-gray-900 max-h-32 overflow-clip">
                 <h1 className="m-1 text-sm line-clamp-2">{anime.title}</h1>
                 <div className="flex gap-2 flex-wrap">
-                  {anime.genres.map((genre: string, index: number) => (
+                  {anime.genres?.map((genre: string, index: number) => (
                     <h1
                       className="bg-gray-700 w-fit rounded-md px-2 text-xs"
                       key={index}

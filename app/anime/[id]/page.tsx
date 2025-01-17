@@ -1,8 +1,8 @@
-import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
 import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
+import { getAnimeInfo, getEpisodeSources } from "@/app/lib/anime-client";
 
 export default async function AnimePage({
   params,
@@ -13,11 +13,9 @@ export default async function AnimePage({
 }) {
   const { ep = 1 }: { ep: number } = await searchParams;
   const { id } = await params;
-  const gogoanime = new ANIME.Gogoanime();
-  const animeInfo = await gogoanime.fetchAnimeInfo(id)
+  const animeInfo = await getAnimeInfo(id)
 
-  const currentEpisodeSource = await gogoanime
-    .fetchEpisodeSources(
+  const currentEpisodeSource = await getEpisodeSources(
       animeInfo.episodes?.[ep - 1].id as string
     )
     .catch((e) => {

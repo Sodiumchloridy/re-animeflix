@@ -97,7 +97,7 @@ export default function WatchListButton({
       {
         <dialog ref={dialogRef} className="z-50 text-center p-4 rounded-xl">
           <p className="text-red-500">{error}</p>
-          <button onClick={() => dialogRef.current?.close()} className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-full mt-4">Ok!</button>
+          <button onClick={() => dialogRef.current?.close()} className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-full mt-4">OK</button>
         </dialog>}
     </>
   );

@@ -1,12 +1,11 @@
 import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
-import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import Link from "next/link";
+import { searchAnime } from "../lib/anime-client";
 
 export default async function Search({ searchParams }: { searchParams: any }) {
   let query = decodeURIComponent(searchParams.query);
-  const gogoanime = new ANIME.Gogoanime();
-  const searchResponse = await gogoanime.search(query);
+  const searchResponse = await searchAnime(query);
 
   return (
     <main className="w-[90%] mx-auto min-h-[200px] mb-10">
