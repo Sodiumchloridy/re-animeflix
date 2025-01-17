@@ -8,15 +8,15 @@ export default async function AnimePage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-    searchParams: { ep: number };
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ ep?: string }>;
 }) {
-  const { ep = 1 }: { ep: number } = await searchParams;
+  const { ep = "1" } = await searchParams;
   const { id } = await params;
   const animeInfo = await getAnimeInfo(id)
 
   const currentEpisodeSource = await getEpisodeSources(
-      animeInfo.episodes?.[ep - 1].id as string
+    animeInfo.episodes?.[Number(ep) - 1].id as string
     )
     .catch((e) => {
       console.log(e);
@@ -91,7 +91,7 @@ export default async function AnimePage({
         <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(100px,1fr))]">
           {animeInfo.episodes?.map((episode: any) => {
             const isActive: Boolean =
-              ep == (episode.number as number);
+              Number(ep) == (episode.number as number);
             return (
               <Link
                 className={`hover:scale-105 transition-transform duration-200 rounded-md p-3 grid place-items-center  ${
