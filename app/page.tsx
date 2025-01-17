@@ -17,9 +17,9 @@ export default async function Home() {
 
       <div className="block xl:flex mt-8 w-auto">
         {/* Recent Episodes */}
-        <aside className="mx-8 lg:mx-12">
+        <aside className="w-full px-4">
           <h1 className="text-3xl font-semibold my-4">Recent Episodes</h1>
-          <div className="grid gap-5 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(125px,1fr))]">
             {recentEpisodes.results.map((anime, index: number) => (
               <div key={index}>
                 <Link

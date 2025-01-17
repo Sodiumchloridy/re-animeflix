@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.4.2",
-    "@consumet/extensions": "github:consumet/consumet.ts",
+    "@consumet/extensions": "github:consumet/extensions",
     "@material-tailwind/react": "^2.1.8",
     "artplayer": "^5.2.1",
     "axios": "^1.6.5",

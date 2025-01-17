@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { handleAddToList, handleRemoveFromList } from "./action";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
@@ -22,6 +22,7 @@ export default function WatchListButton({
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname()
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -36,7 +37,8 @@ export default function WatchListButton({
   const handleAdd = async () => {
     try {
       if (!session) {
-        setError("Please login to add anime to your list");
+        setError("Please login to add anime to your list.");
+        dialogRef.current?.showModal();
         return;
       }
       await handleAddToList(id, title);
@@ -47,7 +49,8 @@ export default function WatchListButton({
       setTimeout(() => setIsInWatchList(true), 2000);
       
     } catch (error) {
-      setError("Failed to add anime");
+      setError("Failed to add anime.");
+      dialogRef.current?.showModal();
     }
   };
 
@@ -61,28 +64,37 @@ export default function WatchListButton({
       setTimeout(() => setIsInWatchList(false), 2000);
 
     } catch (error) {
-      setError("Failed to remove anime");
+      setError("Failed to remove anime.");
+      dialogRef.current?.showModal();
     }
   };
 
   return (
-    <div className="p-2">
+    <>
       {isInWatchList ? (
         <button
+          type="button"
+          title="Remove from List"
           onClick={handleRemove}
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-red-500 hover:bg-red-700 text-white font-normal py-2 px-4 rounded-full mt-2"
         >
           Remove from List
         </button>
       ) : (
         <button
-          onClick={handleAdd}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            type="button"
+            title="Add to List"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-normal py-2 px-4 rounded-full mt-2"
+            onClick={handleAdd}
         >
           Add to List
         </button>
       )}
-      {error && <p className="text-red-500">{error}</p>}
-    </div>
+      {
+        <dialog ref={dialogRef} className="z-50 text-center p-4 rounded-xl">
+          <p className="text-red-500">{error}</p>
+          <button onClick={() => dialogRef.current?.close()} className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-full mt-4">Ok!</button>
+        </dialog>}
+    </>
   );
 }

@@ -15,6 +15,7 @@ export default async function AnimePage({
   const { id } = await params;
   const gogoanime = new ANIME.Gogoanime();
   const animeInfo = await gogoanime.fetchAnimeInfo(id)
+  console.log(animeInfo);
 
   const currentEpisodeSource = await gogoanime
     .fetchEpisodeSources(
@@ -38,13 +39,13 @@ export default async function AnimePage({
     );
 
   return (
-    <main className="bg-black">
+    <main className="bg-black mt-0">
       <div className="w-full flex justify-center my-16 bg-gray-900">
         <VideoPlayer option={{ url: videoUrl.url as string }} />
       </div>
 
       {/* Anime Information Section */}
-      <section className="block sm:flex h-fit px-16 text-white">
+      <section className="block sm:flex h-fit px-8 text-white">
         <Image
           className="h-[40vh] object-cover rounded-md sm:h-72 sm:w-auto"
           src={animeInfo.image as string}
@@ -88,9 +89,9 @@ export default async function AnimePage({
       </section>
 
       {/* Episodes Section */}
-      <section className="px-16 mb-10">
+      <section className="px-8 mb-10">
         <h1 className="text-3xl my-4">Episodes</h1>
-        <div className="grid gap-3 grid-cols-10">
+        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(100px,1fr))]">
           {animeInfo.episodes?.map((episode: any) => {
             const isActive: Boolean =
               ep == (episode.number as number);
