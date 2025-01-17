@@ -54,5 +54,5 @@ export default function Player({ option, ...rest }: PlayerProps) {
         }
     }, []);
 
-    return <div className='w-full h-[60vh]' ref={artRef} {...rest}></div>;
+    return <div className='w-full h-[70vh]' ref={artRef} {...rest}></div>;
 }
