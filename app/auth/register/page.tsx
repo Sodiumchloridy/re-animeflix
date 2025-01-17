@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { handleSubmit } from "./action";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
 
 const initialState = {
   message: "",
@@ -30,6 +31,7 @@ function FormContent() {
         onChange={(e) => setPassword(e.target.value)}
         className="px-4 py-2 border border-gray-300 rounded-md text-black"
       />
+      <p className="text-sm text-gray-500">Do not use your personal passwords.</p>
       <button
         type="submit"
         disabled={pending}
@@ -42,7 +44,7 @@ function FormContent() {
 }
 
 export default function RegisterPage() {
-  const [state, formAction] = useFormState(handleSubmit, initialState);
+  const [state, formAction] = useActionState(handleSubmit, initialState);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
