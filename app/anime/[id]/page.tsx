@@ -15,7 +15,6 @@ export default async function AnimePage({
   const { id } = await params;
   const gogoanime = new ANIME.Gogoanime();
   const animeInfo = await gogoanime.fetchAnimeInfo(id)
-  console.log(animeInfo);
 
   const currentEpisodeSource = await gogoanime
     .fetchEpisodeSources(
