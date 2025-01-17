@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
-import Profile from "@/app/_components/Profile/Profile";
+import Profile from "@/app/_components/shared/Profile/Profile";
 import AuthContext from "./_components/AuthContext";
 
 export const revalidate = 3600; // revalidate the data at most every hour

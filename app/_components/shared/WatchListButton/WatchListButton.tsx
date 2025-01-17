@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { handleAddToList, handleRemoveFromList } from "./action";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
+
 
 type Anime = {
   id: string;
@@ -47,7 +49,7 @@ export default function WatchListButton({
         router.refresh(); // Refresh page if on the watch list page
       }
       setTimeout(() => setIsInWatchList(true), 2000);
-      
+
     } catch (error) {
       setError("Failed to add anime.");
       dialogRef.current?.showModal();
@@ -76,20 +78,22 @@ export default function WatchListButton({
           type="button"
           title="Remove from List"
           onClick={handleRemove}
-          className="bg-red-500 hover:bg-red-700 text-white font-normal py-2 px-4 rounded-full mt-2"
+          className="hover:text-red-500"
         >
-          Remove from List
+          <FaHeart size={25} />
         </button>
       ) : (
         <button
-            type="button"
-            title="Add to List"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-normal py-2 px-4 rounded-full mt-2"
-            onClick={handleAdd}
+          type="button"
+          title="Add to List"
+          className="hover:text-red-500"
+          onClick={handleAdd}
         >
-          Add to List
+          <FaRegHeart size={25} />
         </button>
       )}
+
+      {/* Error Dialog */}
       {
         <dialog ref={dialogRef} className="z-50 text-center p-4 rounded-xl">
           <p className="text-red-500">{error}</p>

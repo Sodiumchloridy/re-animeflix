@@ -2,7 +2,7 @@ import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
-import WatchListButton from "@/app/_components/WatchListButton/WatchListButton";
+import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
 
 export default async function AnimePage({
   params,
@@ -96,7 +96,7 @@ export default async function AnimePage({
               ep == (episode.number as number);
             return (
               <Link
-                className={`rounded-md p-3 grid place-items-center  ${
+                className={`hover:scale-105 transition-transform duration-200 rounded-md p-3 grid place-items-center  ${
                   isActive ? "bg-red-900" : "bg-red-600"
                 }`}
                 key={episode.number}

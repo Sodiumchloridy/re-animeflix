@@ -1,4 +1,4 @@
-import WatchListButton from "@/app/_components/WatchListButton/WatchListButton";
+import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
 import { ANIME } from "@consumet/extensions";
 import Image from "next/image";
 import Link from "next/link";

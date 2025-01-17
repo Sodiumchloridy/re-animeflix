@@ -28,7 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/_components/WatchListButton/action.js"
+    "app/_components/shared/WatchListButton/action.js"
   ],
   "exclude": ["node_modules"]
 }
