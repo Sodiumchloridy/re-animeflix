@@ -11,7 +11,7 @@ export default async function AnimePage({
     params: Promise<{ id: string }>;
     searchParams: Promise<{ ep?: string }>;
 }) {
-  const { ep = "1" } = await searchParams;
+  const { ep } = await searchParams;
   const { id } = await params;
   const animeInfo = await getAnimeInfo(id)
 
