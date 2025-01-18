@@ -52,7 +52,7 @@ export default function Player({ option, ...rest }: PlayerProps) {
                 }
             };
         }
-    }, []);
+    }, [option.url]);
 
     return <div className='w-full h-[70vh]' ref={artRef} {...rest}></div>;
 }

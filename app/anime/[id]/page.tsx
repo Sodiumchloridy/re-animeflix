@@ -3,6 +3,7 @@ import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
 import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
 import { getAnimeInfo, getEpisodeSources } from "@/app/lib/anime-client";
+import { redirect } from "next/navigation";
 
 export default async function AnimePage({
   params,
@@ -11,13 +12,16 @@ export default async function AnimePage({
     params: Promise<{ id: string }>;
     searchParams: Promise<{ ep?: string }>;
 }) {
-  const { ep } = await searchParams;
   const { id } = await params;
-  const animeInfo = await getAnimeInfo(id)
+  const { ep } = await searchParams;
 
-  const currentEpisodeSource = await getEpisodeSources(
-    animeInfo.episodes?.[Number(ep) - 1].id as string
-  )
+  const animeInfo = await getAnimeInfo(id);
+  if (!ep || Number(ep) < 1 || !animeInfo.episodes?.length || Number(ep) > animeInfo.episodes.length) {
+    return redirect(`/anime/${id}?ep=1`);
+  }
+
+  const episodeId = animeInfo.episodes[Number(ep) - 1].id;
+  const currentEpisodeSource = await getEpisodeSources(episodeId);
 
   // Select Video Url
   const videoUrl =

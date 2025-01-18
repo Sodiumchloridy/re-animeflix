@@ -5,7 +5,7 @@ import { IAnimeResult } from "@consumet/extensions";
 export default function AnimeCard({ anime }: { anime: IAnimeResult }) {
     return (
         <Link
-            href={`anime/${anime.id}`}
+            href={`anime/${anime.id}?ep=1`}
             className="relative hover:scale-105 transition-transform duration-200"
         >
             <img

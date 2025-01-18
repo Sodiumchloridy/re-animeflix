@@ -29,7 +29,7 @@ export default async function Home() {
         <aside className="w-full pb-4 px-8 lg:pl-0 lg:pr-12 xl:max-w-[40vw]">
           <h1 className="font-semibold text-3xl my-4">Top Airing</h1>
           {topAiring.results.map((anime: any, index: number) => (
-            <Link className="flex my-4 group/airing overflow-clip rounded-lg" key={index} href={`anime/${anime.id}`}>
+            <Link className="flex my-4 group/airing overflow-clip rounded-lg" key={index} href={`anime/${anime.id}?ep=1`}>
               <Image
                 className="object-cover h-32 w-24 flex-none group-hover/airing:scale-110 transition-transform duration-200"
                 src={anime.image}
