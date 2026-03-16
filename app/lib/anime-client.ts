@@ -43,7 +43,7 @@ export const fetchTopAiring = async () => {
 export const fetchRecentEpisodes = async () => {
     // Recent episodes endpoint on consumet for external providers is deprecated
     // Falling back to Trending to avoid 404 and populate the homepage properly
-    const res = await anilist.fetchTrendingAnime();
+    const res = await anilist.fetchTrendingAnime(1, 40);
     return normalizeAnimeTitle(res);
 };
 
