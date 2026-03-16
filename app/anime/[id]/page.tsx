@@ -108,12 +108,13 @@ export default async function AnimePage({
             Episodes
           </h2>
           <div className="grid grid-cols-5 sm:grid-cols-6 xl:grid-cols-4 gap-2 sm:gap-3 overflow-y-auto pr-2 custom-scrollbar">
-            {animeInfo.episodes?.map((episode: any) => {
-              const isActive = ep === String(episode.number);
+            {animeInfo.episodes?.map((episode: any, index: number) => {
+              const epNumber = index + 1;
+              const isActive = ep === String(epNumber);
               return (
                 <Link
-                  key={episode.number}
-                  href={`/anime/${id}?ep=${episode.number}`}
+                  key={episode.id}
+                  href={`/anime/${id}?ep=${epNumber}`}
                   className={`
                     relative flex items-center justify-center aspect-square rounded-xl text-sm font-medium transition-all duration-200
                     ${isActive 
@@ -121,7 +122,7 @@ export default async function AnimePage({
                       : "bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:text-white hover:border-purple-500/50"}
                   `}
                 >
-                  {episode.number}
+                  {epNumber}
                 </Link>
               );
             })}
