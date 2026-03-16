@@ -1,38 +1,10 @@
 import { META, ANIME, StreamingServers } from "@consumet/extensions";
 import { unstable_cache } from "next/cache";
 
-// Create a singleton instance using Anilist for metadata and AnimePahe for episodes.
-const animepahe = new (ANIME as any).AnimePahe();
+// Create a singleton instance using Anilist for metadata and AnimeKai for episodes.
+const animekai = new (ANIME as any).AnimeKai();
 
-// Configure Proxy for Axios to bypass Vercel Cloudflare Bans
-if (process.env.PROXY_HOST) {
-    const proxyConfig = {
-        protocol: 'http',
-        host: process.env.PROXY_HOST,
-        port: parseInt(process.env.PROXY_PORT || "5611"),
-        auth: {
-            username: process.env.PROXY_USER!,
-            password: process.env.PROXY_PASS!
-        }
-    };
-    /* @ts-ignore - bypassing protected access to inject native proxy agent */
-    animepahe.client.defaults.proxy = proxyConfig;
-}
-
-export const anilist = new META.Anilist(animepahe);
-
-if (process.env.PROXY_HOST) {
-    /* @ts-ignore - bypassing protected access to inject native proxy agent */
-    anilist.client.defaults.proxy = {
-        protocol: 'http',
-        host: process.env.PROXY_HOST,
-        port: parseInt(process.env.PROXY_PORT || "5611"),
-        auth: {
-            username: process.env.PROXY_USER!,
-            password: process.env.PROXY_PASS!
-        }
-    };
-}
+export const anilist = new META.Anilist(animekai);
 
 // Helper to normalize the Anilist title object to a simple string to match the rest of the app
 const normalizeAnimeTitle = (res: any) => {
