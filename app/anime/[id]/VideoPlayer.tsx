@@ -40,9 +40,16 @@ export default function VideoPlayer({ option, ...rest }: PlayerProps) {
             }, () => {
                 videojs.log("player is ready");
             });
+        } else if (playerRef.current) {
+            // If the player already exists and the URL changes, update the source
+            const proxyUrl = option.url.startsWith('http') 
+                ? `/api/proxy?url=${encodeURIComponent(option.url)}`
+                : option.url;
+                
+            playerRef.current.src({ src: proxyUrl, type: "application/vnd.apple.mpegurl" });
         }
         
-    }, [option, rest]);
+    }, [option.url, rest]);
 
     // Dispose the Video.js player when the functional component unmounts
     useEffect(() => {
