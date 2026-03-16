@@ -1,38 +1,10 @@
 export default function Loading() {
     return (
-        <main className="min-h-screen">
-            <div className="w-full flex justify-center my-16 bg-gray-900">
-                <div className="w-[70vw] h-[75vh] animate-pulse bg-gray-800"></div>
+        <main className="w-full flex flex-col items-center justify-center min-h-[70vh] gap-6 animate-in fade-in duration-700">
+            <div className="relative flex items-center justify-center w-20 h-20 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(168,85,247,0.2)]">
+                {/* Outer spinning ring */}
+                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-purple-500 border-r-pink-500 animate-spin"></div>
             </div>
-
-            {/* Anime Information Section */}
-            <section className="block sm:flex h-fit px-16">
-                <div className="h-[40vh] rounded-md aspect-[3/4] sm:h-72 animate-pulse bg-gray-800"></div>
-                <div className="m-0 mt-8 sm:ml-8 sm:mt-0">
-                    <div className="z-10 h-4 w-72 rounded-lg animate-pulse bg-blue-gray-800"></div>
-                    <div className="ml-8 my-4 h-4 w-24 rounded-md animate-pulse bg-blue-gray-800"></div>
-                    <div className="ml-12 my-4 h-4 w-36 rounded-md animate-pulse bg-blue-gray-800"></div>
-                    <div className="my-4 h-4 w-28 rounded-md animate-pulse bg-blue-gray-800"></div>
-                    <div className="my-4 h-4 w-48 rounded-md animate-pulse bg-blue-gray-800"></div>
-                    <div className="ml-4 my-4 h-4 w-96 rounded-md animate-pulse bg-blue-gray-800"></div>
-                    <div className="ml-8 my-4 h-4 w-56 rounded-md animate-pulse bg-blue-gray-800"></div>
-                    <div className="my-4 h-4 w-96 rounded-md animate-pulse bg-blue-gray-800"></div>
-                </div>
-            </section>
-
-            {/* Episodes Section */}
-            <section className="px-16 my-8">
-                <div className="grid gap-3 grid-cols-10">
-                    <div className="rounded-md p-3 h-10 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                    <div className="rounded-md p-3 bg-gray-900 animate-pulse"></div>
-                </div>
-            </section>
         </main>
     );
 }

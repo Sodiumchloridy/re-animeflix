@@ -3,6 +3,7 @@ import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
 import { getAnimeInfo, getEpisodeSources } from "@/app/lib/anime-client";
 import { redirect } from "next/navigation";
+import SynopsisText from "@/app/_components/SynopsisText";
 
 export default async function AnimePage({
   params,
@@ -51,8 +52,11 @@ export default async function AnimePage({
       {/* Information and Episodes Container */}
       <div className="flex flex-col xl:flex-row gap-8 w-full max-w-6xl mx-auto">
         {/* Anime Information Section */}
-        <section className="flex-1 flex flex-col sm:flex-row gap-6 p-6 sm:p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl">
-          <div className="shrink-0 relative overflow-hidden rounded-xl border border-white/10 shadow-lg group">
+        <section className="flex-1 flex flex-col sm:flex-row gap-6 p-6 sm:p-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden relative">
+          {/* Subtle top glare effect to fix blending */}
+          <div className="absolute top-0 left-0 right-0 h-[10px] bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+          
+          <div className="shrink-0 self-start relative overflow-hidden rounded-xl border border-white/10 shadow-lg group">
             <Image
               className="h-72 w-52 sm:h-80 sm:w-56 object-cover group-hover:scale-105 transition-transform duration-500"
               src={animeInfo.image as string}
@@ -89,16 +93,17 @@ export default async function AnimePage({
             {animeInfo.description && (
               <div className="pt-2 border-t border-white/10 mt-auto">
                 <span className="text-white/50 text-sm mb-1 block">Synopsis:</span>
-                <p className="text-sm text-white/70 leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-300">
-                  {animeInfo.description}
-                </p>
+                <SynopsisText text={animeInfo.description} />
               </div>
             )}
           </div>
         </section>
 
         {/* Episodes Section */}
-        <section className="w-full xl:w-[350px] shrink-0 p-6 sm:p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl flex flex-col max-h-[600px]">
+        <section className="w-full xl:w-[350px] shrink-0 p-6 sm:p-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex flex-col max-h-[600px] overflow-hidden relative">
+          {/* Subtle top glare effect to fix blending */}
+          <div className="absolute top-0 left-0 right-0 h-[10px] bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+          
           <h2 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
             Episodes
           </h2>
