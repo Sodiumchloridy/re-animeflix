@@ -12,7 +12,7 @@ export default async function Search({ searchParams }: { searchParams: any }) {
         Found {searchResponse.results.length} Results.
       </h1>
       <div className="grid grid-cols-8 gap-2">
-        {searchResponse.results.map((anime) => {
+        {searchResponse.results.map((anime: any) => {
           return (
             <div key={anime.id}>
               <Link href={`/anime/${anime.id}?ep=1`}>

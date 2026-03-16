@@ -23,10 +23,14 @@ export default async function AnimePage({
   const currentEpisodeSource = await getEpisodeSources(episodeId);
 
   // Select Video Url
+  // Try to find the highest quality subbed source first
+  const subSources = currentEpisodeSource?.sources.filter((s: any) => !s.isDub) || [];
   const videoUrl =
-    currentEpisodeSource?.sources.find(
-      (source) => source.quality === "default"
-    ) || currentEpisodeSource?.sources[0];
+    subSources.find((source: any) => source.quality.includes("1080p")) ||
+    subSources.find((source: any) => source.quality.includes("720p")) ||
+    currentEpisodeSource?.sources.find((source: any) => source.quality === "default") ||
+    currentEpisodeSource?.sources.pop() || 
+    currentEpisodeSource?.sources[0];
 
   while (!animeInfo || !videoUrl)
     return (

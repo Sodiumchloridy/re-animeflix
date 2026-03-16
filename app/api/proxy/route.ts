@@ -13,7 +13,8 @@ export async function GET(request: Request) {
         const response = await fetch(decodedUrl, {
             headers: {
                 'Accept': '*/*',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Referer': 'https://kwik.cx/'
             }
         });
 
@@ -31,14 +32,25 @@ export async function GET(request: Request) {
             pathParts.pop(); // Remove the filename
             const basePath = pathParts.join('/');
 
-            // Replace relative URLs with absolute URLs through our proxy
-            const modifiedContent = text.replace(/^(?!#)(.+\.m3u8|.+\.ts)$/gm, (match) => {
+            // Replace relative URLs and ensure ALL .m3u8, .ts, and obfuscated segment extensions like .jpg go through our proxy
+            let modifiedContent = text.replace(/^(?!#)(.+\.m3u8|.+\.ts|.+\.jpg)$/gm, (match) => {
                 const absoluteUrl = match.startsWith('http')
                     ? match
                     : match.startsWith('/')
                         ? `${baseUrl}${match}`
                         : `${baseUrl}${basePath}/${match}`;
                 return `/api/proxy?url=${encodeURIComponent(absoluteUrl)}`;
+            });
+
+            // Intercept decryption keys embedded inside #EXT-X-KEY tags
+            modifiedContent = modifiedContent.replace(/URI="(.*?)"/g, (match, uri) => {
+                if (uri.startsWith('data:')) return match; // Skip data URIs
+                const absoluteUrl = uri.startsWith('http')
+                    ? uri
+                    : uri.startsWith('/')
+                        ? `${baseUrl}${uri}`
+                        : `${baseUrl}${basePath}/${uri}`;
+                return `URI="/api/proxy?url=${encodeURIComponent(absoluteUrl)}"`;
             });
 
             return new NextResponse(modifiedContent, {

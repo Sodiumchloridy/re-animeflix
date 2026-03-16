@@ -7,6 +7,7 @@ export default function AnimeCard({ anime }: { anime: IAnimeResult }) {
             href={`anime/${anime.id}?ep=1`}
             className="relative hover:scale-105 transition-transform duration-200"
         >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
                 className="aspect-[3/4] object-cover"
                 src={anime.image as string}

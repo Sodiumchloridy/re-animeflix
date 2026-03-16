@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useRef } from 'react';
-import Artplayer from 'artplayer';
-import Hls from 'hls.js';
+import React, { useEffect, useRef } from "react";
+import videojs from "video.js";
+import Player from "video.js/dist/types/player";
+import "video.js/dist/video-js.css";
 
 interface PlayerProps {
     option: {
@@ -11,48 +12,51 @@ interface PlayerProps {
     [key: string]: any;
 }
 
-function playM3u8(video: HTMLVideoElement, url: string, art: Artplayer) {
-    if (Hls.isSupported()) {
-        if (art.hls) art.hls.destroy();
-        const hls = new Hls();
-        const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
-        hls.loadSource(proxyUrl);
-        hls.attachMedia(video);
-        art.hls = hls;
-        art.on('destroy', () => hls.destroy());
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = `/api/proxy?url=${encodeURIComponent(url)}`;
-    } else {
-        art.notice.show = 'Unsupported playback format: m3u8';
-    }
-}
-
-export default function Player({ option, ...rest }: PlayerProps) {
-    const artRef = useRef<HTMLDivElement>(null);
+export default function VideoPlayer({ option, ...rest }: PlayerProps) {
+    const videoRef = useRef<HTMLDivElement>(null);
+    const playerRef = useRef<Player | null>(null);
 
     useEffect(() => {
-        if (artRef.current) {
-            const art = new Artplayer({
-                ...option,
-                container: artRef.current,
-                type: 'm3u8',
-                customType: {
-                    m3u8: playM3u8,
-                },
-                fullscreen: true,
-            });
+        // Make sure Video.js player is only initialized once
+        if (!playerRef.current && videoRef.current) {
+            // The Video.js player needs to be _inside_ the component el for React 18 Strict Mode. 
+            const videoElement = document.createElement("video-js");
+            videoElement.classList.add("vjs-big-play-centered");
+            videoRef.current.appendChild(videoElement);
 
-            art.on('ready', () => {
-                console.info(art.hls);
-            });
+            const proxyUrl = option.url.startsWith('http') 
+                ? `/api/proxy?url=${encodeURIComponent(option.url)}`
+                : option.url;
 
-            return () => {
-                if (art && art.destroy) {
-                    art.destroy(false);
-                }
-            };
+            const player = playerRef.current = videojs(videoElement, {
+                controls: true,
+                responsive: true,
+                fluid: true,
+                sources: [{
+                    src: proxyUrl,
+                    type: "application/vnd.apple.mpegurl"
+                }],
+                ...rest
+            }, () => {
+                videojs.log("player is ready");
+            });
         }
-    }, [option.url]);
+        
+    }, [option, rest]);
 
-    return <div className='w-full h-[70vh]' ref={artRef} {...rest}></div>;
+    // Dispose the Video.js player when the functional component unmounts
+    useEffect(() => {
+        return () => {
+            if (playerRef.current && !playerRef.current.isDisposed()) {
+                playerRef.current.dispose();
+                playerRef.current = null;
+            }
+        };
+    }, []);
+
+    return (
+        <div data-vjs-player className="w-full h-[70vh]">
+            <div ref={videoRef} className="w-full h-full" />
+        </div>
+    );
 }

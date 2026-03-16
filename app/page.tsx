@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import CarouselWithContent from "./_components/Carousel";
 import AnimeCard from "./_components/AnimeCard";
 import { fetchRecentEpisodes, fetchTopAiring } from "./lib/anime-client";
 
@@ -11,15 +10,12 @@ export default async function Home() {
   const recentEpisodes = await fetchRecentEpisodes();
   return (
     <main className="bg-gray-900">
-      {/* Trending Anime */}
-      <CarouselWithContent />
-
       <div className="block xl:flex mt-4 w-auto">
         {/* Recent Episodes */}
         <aside className="w-full px-4">
           <h1 className="text-3xl font-semibold my-4">Recent Episodes</h1>
           <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
-            {recentEpisodes.results.map((anime, index: number) => (
+            {recentEpisodes.results.map((anime: any, index: number) => (
               <AnimeCard anime={anime} key={index} />
             ))}
           </div>
