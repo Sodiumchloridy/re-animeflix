@@ -1,4 +1,3 @@
-import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
 import Image from "next/image";
 import Link from "next/link";
 import { searchAnime } from "../lib/anime-client";
@@ -28,8 +27,6 @@ export default async function Search({ searchParams }: { searchParams: any }) {
                 <h1 className="line-clamp-3">{anime.title as string}</h1>
                 <h1>{anime.releaseDate}</h1>
               </Link>
-              <WatchListButton id={anime.id} title={anime.title as string} />
-
             </div>
           );
         })}
