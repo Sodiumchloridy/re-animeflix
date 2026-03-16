@@ -38,7 +38,12 @@ export const getAnimeInfo = async (id: string) => {
 export const getEpisodeSources = async (episodeId: string, server?: StreamingServers) => {
     const fetchCached = unstable_cache(
         async () => {
-            return await anilist.fetchEpisodeSources(episodeId);
+            try {
+                return await anilist.fetchEpisodeSources(episodeId);
+            } catch (error) {
+                console.error("Failed to fetch episode sources:", error);
+                return { sources: [] }; // Return empty sources gracefully instead of crashing
+            }
         },
         [`episode-sources-${episodeId}`],
         { revalidate: 1800 }

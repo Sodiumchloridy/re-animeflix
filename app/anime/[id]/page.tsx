@@ -25,27 +25,34 @@ export default async function AnimePage({
 
   // Select Video Url
   // Try to find the highest quality subbed source first
-  const subSources = currentEpisodeSource?.sources.filter((s: any) => !s.isDub) || [];
+  const subSources = currentEpisodeSource?.sources?.filter((s: any) => !s.isDub) || [];
   const videoUrl =
     subSources.find((source: any) => source.quality.includes("1080p")) ||
     subSources.find((source: any) => source.quality.includes("720p")) ||
-    currentEpisodeSource?.sources.find((source: any) => source.quality === "default") ||
-    currentEpisodeSource?.sources.pop() || 
-    currentEpisodeSource?.sources[0];
+    currentEpisodeSource?.sources?.find((source: any) => source.quality === "default") ||
+    currentEpisodeSource?.sources?.pop() || 
+    currentEpisodeSource?.sources?.[0];
 
-  while (!animeInfo || !videoUrl)
+  if (!animeInfo) {
     return (
-      <div>
-        Sorry, an unexpected error occured, we were unable to fetch the anime.
+      <div className="w-full flex justify-center mt-16 text-white">
+        Sorry, an unexpected error occured, we were unable to fetch the anime info.
       </div>
     );
+  }
 
   return (
     <main className="w-full flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
       {/* Video Player Section */}
       <div className="w-full flex justify-center mt-2 lg:mt-6">
-        <div className="w-full max-w-6xl bg-black/50 backdrop-blur-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
-          <VideoPlayer option={{ url: videoUrl.url as string }} />
+        <div className="w-full max-w-6xl bg-black/50 backdrop-blur-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex items-center justify-center min-h-[50vh] text-center p-8">
+          {videoUrl?.url ? (
+             <VideoPlayer option={{ url: videoUrl.url as string }} />
+          ) : (
+             <h2 className="text-xl text-white/50">
+               Video source currently unavailable. This is usually caused by cloudflare bot protection blocking the server's IP.
+             </h2>
+          )}
         </div>
       </div>
 
