@@ -55,8 +55,8 @@ export default function VideoPlayer({ option, ...rest }: PlayerProps) {
     }, []);
 
     return (
-        <div data-vjs-player className="w-full h-[70vh]">
-            <div ref={videoRef} className="w-full h-full" />
+        <div data-vjs-player className="w-full">
+            <div ref={videoRef} className="w-full" />
         </div>
     );
 }

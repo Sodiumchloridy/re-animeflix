@@ -44,7 +44,7 @@ export default async function AnimePage({
     <main className="w-full flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
       {/* Video Player Section */}
       <div className="w-full flex justify-center mt-2 lg:mt-6">
-        <div className="w-full max-w-6xl aspect-video bg-black/50 backdrop-blur-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex items-center justify-center">
+        <div className="w-full max-w-6xl bg-black/50 backdrop-blur-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
           <VideoPlayer option={{ url: videoUrl.url as string }} />
         </div>
       </div>
