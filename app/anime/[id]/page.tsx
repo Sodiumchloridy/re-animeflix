@@ -1,7 +1,6 @@
 import Image from "next/image";
 import VideoPlayer from "./VideoPlayer";
 import Link from "next/link";
-import WatchListButton from "@/app/_components/shared/WatchListButton/WatchListButton";
 import { getAnimeInfo, getEpisodeSources } from "@/app/lib/anime-client";
 import { redirect } from "next/navigation";
 
@@ -79,10 +78,6 @@ export default async function AnimePage({
           <p className="mt-4 text-justify line-clamp-4">
             Synopsis: {animeInfo.description}
           </p>
-          <WatchListButton
-            id={animeInfo.id}
-            title={animeInfo.title as string}
-          />
         </div>
       </section>
 

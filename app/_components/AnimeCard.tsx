@@ -1,5 +1,4 @@
 import Link from "next/link";
-import WatchListButton from "./shared/WatchListButton/WatchListButton";
 import { IAnimeResult } from "@consumet/extensions";
 
 export default function AnimeCard({ anime }: { anime: IAnimeResult }) {
@@ -19,7 +18,6 @@ export default function AnimeCard({ anime }: { anime: IAnimeResult }) {
                 <h2 className="text-sm line-clamp-3 mt-1">
                     {anime.title as string}
                 </h2>
-                <WatchListButton id={anime.id} title={anime.title as string} />
             </div>
         </Link>
     );
