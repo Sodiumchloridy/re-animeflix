@@ -40,72 +40,89 @@ export default async function AnimePage({
     );
 
   return (
-    <main className="bg-black mt-0">
-      <div className="w-full flex justify-center my-16 bg-gray-900">
-        <VideoPlayer option={{ url: videoUrl.url as string }} />
+    <main className="w-full flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
+      {/* Video Player Section */}
+      <div className="w-full flex justify-center mt-2 lg:mt-6">
+        <div className="w-full max-w-6xl aspect-video bg-black/50 backdrop-blur-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex items-center justify-center">
+          <VideoPlayer option={{ url: videoUrl.url as string }} />
+        </div>
       </div>
 
-      {/* Anime Information Section */}
-      <section className="block sm:flex h-fit px-8 text-white">
-        <Image
-          className="h-[40vh] object-cover rounded-md sm:h-72 sm:w-auto"
-          src={animeInfo.image as string}
-          alt={animeInfo.title as string}
-          width={500}
-          height={500}
-          unoptimized
-        />
-        <div className="m-0 mt-8 sm:ml-8 sm:mt-0">
-          <h1 className="z-10 text-2xl font-bold text-pretty">
-            {animeInfo.title as string}
-          </h1>
-          <p>Status: {animeInfo.status}</p>
-          <p>Season: {animeInfo.type}</p>
-          <p>
-            Type:{" "}
-            {animeInfo.hasSub
-              ? "SUB"
-              : "DUB"}
-          </p>
-          <p>Synonyms: {animeInfo.otherName || animeInfo.synonyms}</p>
-          <div className="flex gap-2 flex-wrap">
-            <p>Genres: </p>
-            {animeInfo.genres?.map((genre: string, index: number) => (
-              <h1
-                className="bg-gray-700 w-fit h-fit rounded-md px-2 text-xs self-center"
-                key={index}
-              >
-                {genre}
-              </h1>
-            ))}
+      {/* Information and Episodes Container */}
+      <div className="flex flex-col xl:flex-row gap-8 w-full max-w-6xl mx-auto">
+        {/* Anime Information Section */}
+        <section className="flex-1 flex flex-col sm:flex-row gap-6 p-6 sm:p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl">
+          <div className="shrink-0 relative overflow-hidden rounded-xl border border-white/10 shadow-lg group">
+            <Image
+              className="h-72 w-52 sm:h-80 sm:w-56 object-cover group-hover:scale-105 transition-transform duration-500"
+              src={animeInfo.image as string}
+              alt={animeInfo.title as string}
+              width={300}
+              height={450}
+              unoptimized
+            />
           </div>
-          <p className="mt-4 text-justify line-clamp-4">
-            Synopsis: {animeInfo.description}
-          </p>
-        </div>
-      </section>
+          
+          <div className="flex flex-col min-w-0 flex-1 space-y-4 text-white/80">
+            <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+              {animeInfo.title as string}
+            </h1>
+            
+            <div className="grid grid-cols-2 gap-y-2 text-sm max-w-md">
+              <p><span className="text-white/50">Status:</span> <span className="text-white">{animeInfo.status}</span></p>
+              <p><span className="text-white/50">Season:</span> <span className="text-white">{animeInfo.type}</span></p>
+              <p><span className="text-white/50">Type:</span> <span className="text-white">{animeInfo.hasSub ? "SUB" : "DUB"}</span></p>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-white/50 text-sm">Genres:</span>
+              {animeInfo.genres?.map((genre: string, index: number) => (
+                <span
+                  className="bg-purple-500/20 text-purple-200 border border-purple-500/30 rounded-full px-3 py-1 text-xs"
+                  key={index}
+                >
+                  {genre}
+                </span>
+              ))}
+            </div>
 
-      {/* Episodes Section */}
-      <section className="px-8 mb-10">
-        <h1 className="text-3xl my-4">Episodes</h1>
-        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(100px,1fr))]">
-          {animeInfo.episodes?.map((episode: any) => {
-            const isActive: Boolean =
-              Number(ep) == (episode.number as number);
-            return (
-              <Link
-                className={`hover:scale-105 transition-transform duration-200 rounded-md p-3 grid place-items-center  ${
-                  isActive ? "bg-red-900" : "bg-red-600"
-                }`}
-                key={episode.number}
-                href={`/anime/${id}?ep=${episode.number}`}
-              >
-                <p>{episode.number}</p>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+            {animeInfo.description && (
+              <div className="pt-2 border-t border-white/10 mt-auto">
+                <span className="text-white/50 text-sm mb-1 block">Synopsis:</span>
+                <p className="text-sm text-white/70 leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-300">
+                  {animeInfo.description}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Episodes Section */}
+        <section className="w-full xl:w-[350px] shrink-0 p-6 sm:p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl flex flex-col max-h-[600px]">
+          <h2 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
+            Episodes
+          </h2>
+          <div className="grid grid-cols-5 sm:grid-cols-6 xl:grid-cols-4 gap-2 sm:gap-3 overflow-y-auto pr-2 custom-scrollbar">
+            {animeInfo.episodes?.map((episode: any) => {
+              const isActive = ep === String(episode.number);
+              return (
+                <Link
+                  key={episode.number}
+                  href={`/anime/${id}?ep=${episode.number}`}
+                  className={`
+                    relative flex items-center justify-center aspect-square rounded-xl text-sm font-medium transition-all duration-200
+                    ${isActive 
+                      ? "bg-purple-600 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)] border border-purple-400" 
+                      : "bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:text-white hover:border-purple-500/50"}
+                  `}
+                >
+                  {episode.number}
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

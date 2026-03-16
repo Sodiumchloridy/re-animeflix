@@ -9,49 +9,63 @@ export default async function Home() {
   const topAiring = await fetchTopAiring();
   const recentEpisodes = await fetchRecentEpisodes();
   return (
-    <main className="bg-gray-900">
-      <div className="block xl:flex mt-4 w-auto">
-        {/* Recent Episodes */}
-        <aside className="w-full px-4">
-          <h1 className="text-3xl font-semibold my-4">Recent Episodes</h1>
-          <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
-            {recentEpisodes.results.map((anime: any, index: number) => (
-              <AnimeCard anime={anime} key={index} />
-            ))}
-          </div>
-        </aside>
+    <div className="flex flex-col lg:flex-row gap-8 w-full animate-in fade-in duration-700">
+      {/* Recent Episodes */}
+      <section className="flex-1 min-w-0">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
+          Recent Episodes
+        </h1>
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          {recentEpisodes.results.map((anime: any, index: number) => (
+            <AnimeCard anime={anime} key={index} />
+          ))}
+        </div>
+      </section>
 
-        {/* Top Airing */}
-        <aside className="w-full pb-4 px-8 lg:pl-0 lg:pr-12 xl:max-w-[40vw]">
-          <h1 className="font-semibold text-3xl my-4">Top Airing</h1>
+      {/* Top Airing */}
+      <aside className="w-full lg:w-[350px] xl:w-[400px] shrink-0">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+          Top Airing
+        </h1>
+        <div className="flex flex-col gap-4">
           {topAiring.results.map((anime: any, index: number) => (
-            <Link className="flex my-4 group/airing overflow-clip rounded-lg" key={index} href={`anime/${anime.id}?ep=1`}>
-              <Image
-                className="object-cover h-32 w-24 flex-none group-hover/airing:scale-110 transition-transform duration-200"
-                src={anime.image}
-                alt={anime.title}
-                width={300}
-                height={500}
-                unoptimized
-              />
-              {/* Anime Title and Genre */}
-              <div className="w-full p-2 bg-blue-gray-900 max-h-32 overflow-clip">
-                <h1 className="m-1 text-sm line-clamp-2">{anime.title}</h1>
-                <div className="flex gap-2 flex-wrap">
-                  {anime.genres?.map((genre: string, index: number) => (
-                    <h1
-                      className="bg-gray-700 w-fit rounded-md px-2 text-xs"
-                      key={index}
+            <Link
+              key={index}
+              href={`anime/${anime.id}?ep=1`}
+              className="group flex gap-4 p-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-purple-500/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-purple-500/10 transition-all duration-300"
+            >
+              <div className="relative h-28 w-20 shrink-0 overflow-hidden rounded-xl">
+                <Image
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  src={anime.image}
+                  alt={anime.title}
+                  fill
+                  sizes="80px"
+                  unoptimized
+                />
+              </div>
+              <div className="flex flex-col py-1 overflow-hidden">
+                <h2 className="font-semibold text-sm sm:text-base text-white/90 group-hover:text-purple-300 transition-colors line-clamp-2 mb-2">
+                  {anime.title}
+                </h2>
+                <div className="flex flex-wrap gap-1.5 mt-auto">
+                  {anime.genres?.slice(0, 3).map((genre: string, idx: number) => (
+                    <span
+                      className="bg-white/10 text-white/80 rounded-full px-2.5 py-0.5 text-[10px] xl:text-xs tracking-wider border border-white/5"
+                      key={idx}
                     >
                       {genre}
-                    </h1>
+                    </span>
                   ))}
+                  {anime.genres?.length > 3 && (
+                     <span className="text-white/50 text-[10px] xl:text-xs py-0.5">+{anime.genres.length - 3}</span>
+                  )}
                 </div>
               </div>
             </Link>
           ))}
-        </aside>
-      </div>
-    </main>
+        </div>
+      </aside>
+    </div>
   );
 }
