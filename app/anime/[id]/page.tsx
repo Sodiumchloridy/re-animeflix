@@ -50,7 +50,7 @@ export default async function AnimePage({
              <VideoPlayer option={{ url: videoUrl.url as string }} />
           ) : (
              <h2 className="text-xl text-white/50">
-               Video source currently unavailable. This is usually caused by cloudflare bot protection blocking the server's IP.
+               Video source currently unavailable. This is usually caused by cloudflare bot protection blocking the server&apos;s IP.
              </h2>
           )}
         </div>
