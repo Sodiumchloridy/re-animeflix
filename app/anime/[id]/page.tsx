@@ -15,13 +15,25 @@ export default async function AnimePage({
   const { id } = await params;
   const { ep } = await searchParams;
 
-  const animeInfo = await getAnimeInfo(id);
-  if (!ep || Number(ep) < 1 || !animeInfo.episodes?.length || Number(ep) > animeInfo.episodes.length) {
+  let animeInfo: any;
+  try {
+    animeInfo = await getAnimeInfo(id);
+  } catch (e) {
+    console.error("Failed to load anime info:", e);
+  }
+
+  if (!ep || Number(ep) < 1 || !animeInfo?.episodes?.length || Number(ep) > animeInfo.episodes.length) {
     return redirect(`/anime/${id}?ep=1`);
   }
 
   const episodeId = animeInfo.episodes[Number(ep) - 1].id;
-  const { sources: currentEpisodeSource } = await getEpisodeSources(episodeId);
+  let currentEpisodeSource: any[] = [];
+  try {
+    const result = await getEpisodeSources(episodeId);
+    currentEpisodeSource = result?.sources || [];
+  } catch (e) {
+    console.error("Failed to load episode sources:", e);
+  }
 
   // Select Video Url - prefer subbed, highest quality
   const subSources = currentEpisodeSource?.filter((s: any) => !s.isDub) || [];
@@ -30,6 +42,14 @@ export default async function AnimePage({
     subSources.find((s: any) => s.quality?.includes("720p")) ||
     currentEpisodeSource?.find((s: any) => s.quality === "default") ||
     currentEpisodeSource?.[0];
+
+  if (!animeInfo) {
+    return (
+      <div className="w-full flex justify-center mt-16 text-white">
+        Unable to load anime info.
+      </div>
+    );
+  }
 
   return (
     <main className="w-full flex flex-col gap-8 pb-10 animate-in fade-in duration-700">

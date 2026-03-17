@@ -32,25 +32,18 @@ export const getAnimeInfo = async (id: string) => {
 };
 
 // Try multiple servers until one works
-const SERVERS = [undefined, StreamingServers.VidStreaming, StreamingServers.StreamTape, StreamingServers.GogoCDN];
+const SERVERS = [null, StreamingServers.VidStreaming, StreamingServers.StreamTape];
 
 export const getEpisodeSources = async (episodeId: string) => {
-    const fetchCached = unstable_cache(
-        async () => {
-            for (const server of SERVERS) {
-                try {
-                    const res = await anilist.fetchEpisodeSources(episodeId, server);
-                    if (res?.sources?.length) return { sources: res.sources, server };
-                } catch (e) {
-                    console.error(`Server ${server} failed:`, e);
-                }
-            }
-            return { sources: [] };
-        },
-        [`episode-sources-${episodeId}`],
-        { revalidate: 1800 }
-    );
-    return fetchCached();
+    for (const server of SERVERS) {
+        try {
+            const res = await anilist.fetchEpisodeSources(episodeId, server);
+            if (res?.sources?.length) return { sources: res.sources, server };
+        } catch (e) {
+            console.error(`Server ${server} failed:`, e);
+        }
+    }
+    return { sources: [] };
 };
 
 export const searchAnime = async (query: string) => {
