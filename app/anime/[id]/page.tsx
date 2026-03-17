@@ -16,10 +16,12 @@ export default async function AnimePage({
   const { ep } = await searchParams;
 
   let animeInfo: any;
+  let animeInfoError = false;
   try {
     animeInfo = await getAnimeInfo(id);
   } catch (e) {
     console.error("Failed to load anime info:", e);
+    animeInfoError = true;
   }
 
   if (!ep || Number(ep) < 1 || !animeInfo?.episodes?.length || Number(ep) > animeInfo.episodes.length) {
@@ -28,11 +30,14 @@ export default async function AnimePage({
 
   const episodeId = animeInfo.episodes[Number(ep) - 1].id;
   let currentEpisodeSource: any[] = [];
+  let episodeError = false;
   try {
     const result = await getEpisodeSources(episodeId);
     currentEpisodeSource = result?.sources || [];
+    console.log("Episode sources loaded:", currentEpisodeSource?.length);
   } catch (e) {
     console.error("Failed to load episode sources:", e);
+    episodeError = true;
   }
 
   // Select Video Url - prefer subbed, highest quality
@@ -42,6 +47,18 @@ export default async function AnimePage({
     subSources.find((s: any) => s.quality?.includes("720p")) ||
     currentEpisodeSource?.find((s: any) => s.quality === "default") ||
     currentEpisodeSource?.[0];
+
+  if (animeInfoError || episodeError) {
+    return (
+      <div className="w-full flex justify-center mt-16 text-white">
+        <div className="text-center">
+          <h2 className="text-xl mb-2">Error loading content</h2>
+          {animeInfoError && <p className="text-red-400">Failed to load anime info (consumet API)</p>}
+          {episodeError && <p className="text-red-400">Failed to load video sources</p>}
+        </div>
+      </div>
+    );
+  }
 
   if (!animeInfo) {
     return (

@@ -35,14 +35,18 @@ export const getAnimeInfo = async (id: string) => {
 const SERVERS = [null, StreamingServers.VidStreaming, StreamingServers.StreamTape];
 
 export const getEpisodeSources = async (episodeId: string) => {
+    console.log("Fetching episode sources for:", episodeId);
     for (const server of SERVERS) {
         try {
+            console.log(`Trying server: ${server || 'default'}`);
             const res = await anilist.fetchEpisodeSources(episodeId, server);
+            console.log(`Server ${server || 'default'} returned ${res?.sources?.length} sources`);
             if (res?.sources?.length) return { sources: res.sources, server };
-        } catch (e) {
-            console.error(`Server ${server} failed:`, e);
+        } catch (e: any) {
+            console.error(`Server ${server || 'default'} failed:`, e?.message || e);
         }
     }
+    console.warn("All servers failed, returning empty sources");
     return { sources: [] };
 };
 
