@@ -16,28 +16,46 @@ export default async function AnimePage({
   const { ep } = await searchParams;
 
   let animeInfo: any;
-  let animeInfoError = false;
   try {
     animeInfo = await getAnimeInfo(id);
-  } catch (e) {
-    console.error("Failed to load anime info:", e);
-    animeInfoError = true;
+  } catch (e: any) {
+    const isRateLimit = e?.message?.includes('ratelimit');
+    return (
+      <div className="w-full flex justify-center mt-16 text-white">
+        <div className="text-center max-w-md">
+          <h2 className="text-xl mb-2">Unable to load anime info</h2>
+          {isRateLimit ? (
+            <p className="text-yellow-400">
+              We&apos;re being rate-limited by the data provider. Please wait a few minutes before trying again.
+            </p>
+          ) : (
+            <p className="text-red-400">The service may be temporarily unavailable. Please try again later.</p>
+          )}
+        </div>
+      </div>
+    );
   }
 
-  if (!ep || Number(ep) < 1 || !animeInfo?.episodes?.length || Number(ep) > animeInfo.episodes.length) {
+  if (!animeInfo || !animeInfo.episodes?.length) {
+    return (
+      <div className="w-full flex justify-center mt-16 text-white">
+        Anime not found or has no episodes.
+      </div>
+    );
+  }
+
+  const episodeNum = ep ? Number(ep) : 1;
+  if (episodeNum < 1 || episodeNum > animeInfo.episodes.length) {
     return redirect(`/anime/${id}?ep=1`);
   }
 
-  const episodeId = animeInfo.episodes[Number(ep) - 1].id;
+  const episodeId = animeInfo.episodes[episodeNum - 1].id;
   let currentEpisodeSource: any[] = [];
-  let episodeError = false;
   try {
     const result = await getEpisodeSources(episodeId);
     currentEpisodeSource = result?.sources || [];
-    console.log("Episode sources loaded:", currentEpisodeSource?.length);
   } catch (e) {
     console.error("Failed to load episode sources:", e);
-    episodeError = true;
   }
 
   // Select Video Url - prefer subbed, highest quality
@@ -47,26 +65,6 @@ export default async function AnimePage({
     subSources.find((s: any) => s.quality?.includes("720p")) ||
     currentEpisodeSource?.find((s: any) => s.quality === "default") ||
     currentEpisodeSource?.[0];
-
-  if (animeInfoError || episodeError) {
-    return (
-      <div className="w-full flex justify-center mt-16 text-white">
-        <div className="text-center">
-          <h2 className="text-xl mb-2">Error loading content</h2>
-          {animeInfoError && <p className="text-red-400">Failed to load anime info (consumet API)</p>}
-          {episodeError && <p className="text-red-400">Failed to load video sources</p>}
-        </div>
-      </div>
-    );
-  }
-
-  if (!animeInfo) {
-    return (
-      <div className="w-full flex justify-center mt-16 text-white">
-        Unable to load anime info.
-      </div>
-    );
-  }
 
   return (
     <main className="w-full flex flex-col gap-8 pb-10 animate-in fade-in duration-700">
