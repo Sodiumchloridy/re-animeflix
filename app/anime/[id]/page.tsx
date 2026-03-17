@@ -21,25 +21,15 @@ export default async function AnimePage({
   }
 
   const episodeId = animeInfo.episodes[Number(ep) - 1].id;
-  const currentEpisodeSource = await getEpisodeSources(episodeId);
+  const { sources: currentEpisodeSource } = await getEpisodeSources(episodeId);
 
-  // Select Video Url
-  // Try to find the highest quality subbed source first
-  const subSources = currentEpisodeSource?.sources?.filter((s: any) => !s.isDub) || [];
+  // Select Video Url - prefer subbed, highest quality
+  const subSources = currentEpisodeSource?.filter((s: any) => !s.isDub) || [];
   const videoUrl =
-    subSources.find((source: any) => source.quality.includes("1080p")) ||
-    subSources.find((source: any) => source.quality.includes("720p")) ||
-    currentEpisodeSource?.sources?.find((source: any) => source.quality === "default") ||
-    currentEpisodeSource?.sources?.pop() || 
-    currentEpisodeSource?.sources?.[0];
-
-  if (!animeInfo) {
-    return (
-      <div className="w-full flex justify-center mt-16 text-white">
-        Sorry, an unexpected error occured, we were unable to fetch the anime info.
-      </div>
-    );
-  }
+    subSources.find((s: any) => s.quality?.includes("1080p")) ||
+    subSources.find((s: any) => s.quality?.includes("720p")) ||
+    currentEpisodeSource?.find((s: any) => s.quality === "default") ||
+    currentEpisodeSource?.[0];
 
   return (
     <main className="w-full flex flex-col gap-8 pb-10 animate-in fade-in duration-700">

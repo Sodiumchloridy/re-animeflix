@@ -1,12 +1,9 @@
 import { META, ANIME, StreamingServers } from "@consumet/extensions";
 import { unstable_cache } from "next/cache";
 
-// Create a singleton instance using Anilist for metadata and AnimeKai for episodes.
-const animekai = new (ANIME as any).AnimeKai();
+const provider = new (ANIME as any).AnimeKai();
+export const anilist = new META.Anilist(provider);
 
-export const anilist = new META.Anilist(animekai);
-
-// Helper to normalize the Anilist title object to a simple string to match the rest of the app
 const normalizeAnimeTitle = (res: any) => {
     if (res?.title && typeof res.title === 'object') {
         res.title = res.title.english || res.title.romaji || res.title.native || "Unknown Title";
@@ -22,7 +19,6 @@ const normalizeAnimeTitle = (res: any) => {
     return res;
 };
 
-// Cache Anime Info for 1 hour (3600 seconds) - Info rarely changes frequently
 export const getAnimeInfo = async (id: string) => {
     const fetchCached = unstable_cache(
         async () => {
@@ -35,16 +31,21 @@ export const getAnimeInfo = async (id: string) => {
     return fetchCached();
 };
 
-// Cache Stream Links for 30 mins (1800 seconds) - Stream URLs can expire, so we can't cache them forever
-export const getEpisodeSources = async (episodeId: string, server?: StreamingServers) => {
+// Try multiple servers until one works
+const SERVERS = [undefined, StreamingServers.VidStreaming, StreamingServers.StreamTape, StreamingServers.GogoCDN];
+
+export const getEpisodeSources = async (episodeId: string) => {
     const fetchCached = unstable_cache(
         async () => {
-            try {
-                return await anilist.fetchEpisodeSources(episodeId);
-            } catch (error) {
-                console.error("Failed to fetch episode sources:", error);
-                return { sources: [] }; // Return empty sources gracefully instead of crashing
+            for (const server of SERVERS) {
+                try {
+                    const res = await anilist.fetchEpisodeSources(episodeId, server);
+                    if (res?.sources?.length) return { sources: res.sources, server };
+                } catch (e) {
+                    console.error(`Server ${server} failed:`, e);
+                }
             }
+            return { sources: [] };
         },
         [`episode-sources-${episodeId}`],
         { revalidate: 1800 }
@@ -92,9 +93,4 @@ export const fetchRecentEpisodes = async () => {
         { revalidate: 3600 }
     );
     return fetchCached();
-};
-
-export const fetchPopularAnime = async () => {
-    const res = await anilist.fetchPopularAnime();
-    return normalizeAnimeTitle(res);
 };

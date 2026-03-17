@@ -10,11 +10,22 @@ export async function GET(request: Request) {
         }
 
         const decodedUrl = decodeURIComponent(videoUrl);
+        // Determine the referer based on the URL domain
+        const getReferer = (url: string) => {
+            if (url.includes('hub26link.site') || url.includes('dev23app.site') || url.includes('pro25zone.site') || url.includes('kwik.cx')) {
+                return 'https://kwik.cx/';
+            }
+            try {
+                return new URL(url).origin;
+            } catch {
+                return 'https://kwik.cx/';
+            }
+        };
         const response = await fetch(decodedUrl, {
             headers: {
                 'Accept': '*/*',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                'Referer': 'https://kwik.cx/'
+                'Referer': getReferer(decodedUrl)
             }
         });
 
@@ -32,25 +43,25 @@ export async function GET(request: Request) {
             pathParts.pop(); // Remove the filename
             const basePath = pathParts.join('/');
 
-            // Replace relative URLs and ensure ALL .m3u8, .ts, and obfuscated segment extensions like .jpg go through our proxy
-            let modifiedContent = text.replace(/^(?!#)(.+\.m3u8|.+\.ts|.+\.jpg)$/gm, (match) => {
+            const toProxyUrl = (match: string) => {
                 const absoluteUrl = match.startsWith('http')
                     ? match
                     : match.startsWith('/')
                         ? `${baseUrl}${match}`
                         : `${baseUrl}${basePath}/${match}`;
                 return `/api/proxy?url=${encodeURIComponent(absoluteUrl)}`;
-            });
+            };
+
+            // Replace all segment URLs - match any non-comment, non-empty line that looks like a URL/path
+            let modifiedContent = text.replace(/^(?!#)([^\s#]+\.(m3u8|ts|js|jpg|gif|jpeg|png|webp|mp4|aac))$/gm, toProxyUrl);
+
+            // Also catch any line that's a full http URL (for variant playlists)
+            modifiedContent = modifiedContent.replace(/^(?!#)(https?:\/\/[^\s#]+)$/gm, toProxyUrl);
 
             // Intercept decryption keys embedded inside #EXT-X-KEY tags
-            modifiedContent = modifiedContent.replace(/URI="(.*?)"/g, (match, uri) => {
-                if (uri.startsWith('data:')) return match; // Skip data URIs
-                const absoluteUrl = uri.startsWith('http')
-                    ? uri
-                    : uri.startsWith('/')
-                        ? `${baseUrl}${uri}`
-                        : `${baseUrl}${basePath}/${uri}`;
-                return `URI="/api/proxy?url=${encodeURIComponent(absoluteUrl)}"`;
+            modifiedContent = modifiedContent.replace(/URI="([^"]+)"/g, (match, uri) => {
+                if (uri.startsWith('data:')) return match;
+                return `URI="${toProxyUrl(uri)}"`;
             });
 
             return new NextResponse(modifiedContent, {
@@ -64,7 +75,7 @@ export async function GET(request: Request) {
             });
         }
 
-        // For non-M3U8 files, return as blob
+        // For non-M3U8 files (video segments), return as blob with proper headers
         const data = await response.blob();
         return new NextResponse(data, {
             headers: {
