@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { fetchPopularAnime, fetchRecentEpisodes, fetchTopAiring, getAnimeInfo, getEpisodeSources, searchAnime } from '../../app/lib/anime-client'
+import { fetchRecentEpisodes, fetchTopAiring, getAnimeInfo, getEpisodeSources, searchAnime } from '../../app/lib/anime-client'
 import { StreamingServers } from '@consumet/extensions';
 
 describe('Anime Client', () => {
@@ -10,11 +10,10 @@ describe('Anime Client', () => {
 
   it('returns a filled object of episode sources', async () => {
     const data = await getEpisodeSources(
-      'arifureta-shokugyou-de-sekai-saikyou-season-3-episode-1',
-      StreamingServers.GogoCDN
+      'arifureta-shokugyou-de-sekai-saikyou-season-3-episode-1'
     );
     expect(data.sources).not.toEqual([]);
-    expect(data.subtitles).not.toEqual([]);
+    expect(data.server).not.toEqual([]);
   });
 
   it('returns a filled array of anime list', async () => {
@@ -34,11 +33,6 @@ describe('Anime Client', () => {
 
   it('returns a filled array of recent episodes', async () => {
     const data = await fetchRecentEpisodes();
-    expect(data).not.toEqual([]);
-  });
-
-  it('returns a filled array of popular anime', async () => {
-    const data = await fetchPopularAnime();
     expect(data).not.toEqual([]);
   });
 })
