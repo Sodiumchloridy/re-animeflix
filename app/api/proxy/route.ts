@@ -17,6 +17,9 @@ export async function GET(request: Request) {
             return new NextResponse('Invalid URL parameter', { status: 400 });
         }
 
+        if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+            return new NextResponse('Unsupported URL protocol', { status: 400 });
+        }
         // Determine the referer based on the URL domain
         const getReferer = (urlStr: string, origin: string) => {
             if (urlStr.includes('hub26link.site') || urlStr.includes('dev23app.site') || urlStr.includes('pro25zone.site') || urlStr.includes('kwik.cx')) {
