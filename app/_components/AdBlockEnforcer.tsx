@@ -42,20 +42,25 @@ export default function AdBlockEnforcer({ children }: AdBlockEnforcerProps) {
             const script = document.createElement("script");
             script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?t=" + Date.now();
             script.async = true;
+
+            const timeout = setTimeout(() => {
+                script.remove();
+                resolve(false);
+            }, 1500);
+
             script.onerror = () => {
+                clearTimeout(timeout);
                 script.remove();
                 resolve(true);
             };
             script.onload = () => {
+                clearTimeout(timeout);
                 script.remove();
                 // If uBlock stubbed the script, window.adsbygoogle won't be initialized as expected
                 resolve(!("adsbygoogle" in window));
             };
+
             document.head.appendChild(script);
-            setTimeout(() => {
-                script.remove();
-                resolve(true);
-            }, 350);
         });
 
         if (scriptBlocked) {
