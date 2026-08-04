@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
+import FloatingDock from "./_components/FloatingDock";
+import HeaderSearch from "./_components/HeaderSearch";
 
-export const revalidate = 3600; // revalidate the data at most every hour
+export const revalidate = 3600;
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-poppins",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "Re: Animeflix",
-  description: "An anime discovery, streaming site. Ad-free.",
+  title: "Re: Animeflix — Accessible & Streamlined Anime Discovery",
+  description: "Experience ultra-fast anime discovery and streaming with custom players, HD streams, and modern visual design.",
 };
 
 export default function RootLayout({
@@ -24,65 +25,77 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark scroll-smooth">
       <body
-        className={`${poppins.className} text-white bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-purple-900/20 to-black min-h-screen bg-fixed selection:bg-purple-500/30`}
+        className={`${inter.className} text-zinc-100 bg-[#090a0f] min-h-screen flex flex-col antialiased selection:bg-purple-500/30 selection:text-purple-200`}
       >
-        <main className="flex flex-col min-h-screen pt-16">
-            {/* Navbar */}
-            <nav className="z-50 fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-8 bg-black/20 backdrop-blur-xl border-b border-white/10 shadow-2xl">
-              <Link href="/" className="flex-shrink-0 hover:scale-105 transition-transform">
-                <Image
-                  alt="animeflix logo"
-                  width={30}
-                  height={30}
-                  src="/animeflix.svg"
-                  unoptimized
-                />
-              </Link>
-              {/* Search Box */}
-              <form
-                action="/search"
-                className="h-10 w-full max-w-[500px] bg-white/5 border border-white/10 hover:border-white/20 focus-within:border-purple-500/50 focus-within:bg-white/10 focus-within:shadow-[0_0_15px_rgba(168,85,247,0.2)] rounded-full flex items-center mx-8 transition-all duration-300"
+        {/* Navigation Bar */}
+        <header className="sticky top-0 z-50 w-full h-16 bg-[#090a0f]/80 backdrop-blur-xl border-b border-white/10 shadow-lg">
+          <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-4">
+            {/* Logo & Brand */}
+            <Link href="/" className="flex items-center gap-3 shrink-0 group outline-none focus:outline-none focus:ring-0 p-1">
+              <div className="relative w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 p-0.5 shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-full h-full bg-[#090a0f] rounded-[10px] flex items-center justify-center">
+                  <Image
+                    alt="Re:Animeflix logo"
+                    width={20}
+                    height={20}
+                    src="/animeflix.svg"
+                    unoptimized
+                    className="drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]"
+                  />
+                </div>
+              </div>
+              <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-200 to-purple-300">
+                Anime<span className="text-purple-400">flix</span>
+              </span>
+            </Link>
+
+            {/* Search Input Bar (Miruro / Lunar style with debounced instant search) */}
+            <HeaderSearch />
+
+            {/* Right side navigation items */}
+            <nav className="flex items-center gap-3">
+              <Link
+                href="/search"
+                className="hidden sm:inline-flex text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/30 text-zinc-300 hover:text-white transition-all"
               >
-                {/* Search Icon */}
-                <button type="submit" className="pl-4 pr-2">
-                  <svg
-                    className="fill-white/70 w-4 h-4 hover:fill-white transition-colors"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                  >
-                    <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-                  </svg>
-                </button>
-              {/* Search Input */}
-              <input
-                className="bg-transparent w-full pr-4 py-2 text-sm text-white placeholder-white/50 focus:outline-none"
-                type="text"
-                name="query"
-                placeholder="Search anime..."
-              ></input>
-            </form>
-            <div className="w-[30px] hidden sm:block"></div>
-          </nav>
-          {/* Content */}
-          <div className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-8">
-            {children}
+                Catalog
+              </Link>
+            </nav>
           </div>
-            {/* Footer */}
-            <div className="mt-auto text-white/60 bg-white/5 backdrop-blur-md border-t border-white/10 w-full p-8 text-sm grid place-items-center gap-2">
-              <p>
-                &copy; Animeflix {new Date().getFullYear()} by&nbsp;
-                <a className="text-purple-400 hover:text-purple-300 transition-colors" href="https://github.com/Sodiumchloridy">Sodiumchloridy</a>
-                .
-              </p>
-              <p className="text-center">
-                This site does not store any files on its server. All contents
-                are provided by non-affiliated third parties.
-              </p>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-24">
+          {children}
+        </main>
+
+        {/* Floating Quick Dock */}
+        <FloatingDock />
+
+        {/* Footer */}
+        <footer className="w-full border-t border-white/10 bg-zinc-950/80 backdrop-blur-md py-8 px-4 text-xs text-zinc-400 mt-auto">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-zinc-200">Re: Animeflix</span>
+              <span>&copy; {new Date().getFullYear()}</span>
+              <span>•</span>
+              <a
+                href="https://github.com/Sodiumchloridy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-400 hover:text-purple-300 transition-colors"
+              >
+                Sodiumchloridy
+              </a>
             </div>
-          </main>
-        </body>
+            <p className="text-center sm:text-right text-zinc-500 max-w-md leading-relaxed">
+              This site does not host any media files. All content is provided by non-affiliated third party services.
+            </p>
+          </div>
+        </footer>
+      </body>
     </html>
   );
 }
