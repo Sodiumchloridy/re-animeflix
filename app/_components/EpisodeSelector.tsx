@@ -130,6 +130,7 @@ export default function EpisodeSelector({
             >
               ✕
             </button>
+          )}
         </div>
 
         {/* Range Tabs (for large series > 50 episodes) */}
