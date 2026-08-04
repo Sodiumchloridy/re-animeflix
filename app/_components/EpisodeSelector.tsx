@@ -123,12 +123,13 @@ export default function EpisodeSelector({
           </svg>
           {searchQuery && (
             <button
+              type="button"
               onClick={() => setSearchQuery("")}
+              aria-label="Clear episode filter"
               className="absolute right-2 top-2 text-[10px] text-zinc-400 hover:text-white"
             >
               ✕
             </button>
-          )}
         </div>
 
         {/* Range Tabs (for large series > 50 episodes) */}
