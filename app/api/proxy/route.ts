@@ -10,22 +10,26 @@ export async function GET(request: Request) {
         }
 
         const decodedUrl = decodeURIComponent(videoUrl);
+        let parsedUrl: URL;
+        try {
+            parsedUrl = new URL(decodedUrl);
+        } catch {
+            return new NextResponse('Invalid URL parameter', { status: 400 });
+        }
+
         // Determine the referer based on the URL domain
-        const getReferer = (url: string) => {
-            if (url.includes('hub26link.site') || url.includes('dev23app.site') || url.includes('pro25zone.site') || url.includes('kwik.cx')) {
+        const getReferer = (urlStr: string, origin: string) => {
+            if (urlStr.includes('hub26link.site') || urlStr.includes('dev23app.site') || urlStr.includes('pro25zone.site') || urlStr.includes('kwik.cx')) {
                 return 'https://kwik.cx/';
             }
-            try {
-                return new URL(url).origin;
-            } catch {
-                return 'https://kwik.cx/';
-            }
+            return origin || 'https://kwik.cx/';
         };
+
         const response = await fetch(decodedUrl, {
             headers: {
                 'Accept': '*/*',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                'Referer': getReferer(decodedUrl)
+                'Referer': getReferer(decodedUrl, parsedUrl.origin)
             }
         });
 
@@ -38,8 +42,8 @@ export async function GET(request: Request) {
         // If it's an M3U8 file, we need to modify the contents
         if (response.headers.get('Content-Type')?.includes('application/vnd.apple.mpegurl')) {
             const text = await response.text();
-            const baseUrl = new URL(decodedUrl).origin;
-            const pathParts = new URL(decodedUrl).pathname.split('/');
+            const baseUrl = parsedUrl.origin;
+            const pathParts = parsedUrl.pathname.split('/');
             pathParts.pop(); // Remove the filename
             const basePath = pathParts.join('/');
 

@@ -3,7 +3,6 @@
 /** @type {import('next').NextConfig} */
 
 module.exports = {
-   serverExternalPackages: ["@consumet/extensions"],
    async headers() {
     return [
       {
