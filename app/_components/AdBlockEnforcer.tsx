@@ -19,69 +19,38 @@ export default function AdBlockEnforcer({ children }: AdBlockEnforcerProps) {
     const detectAdBlocker = async () => {
         let isBlocked = false;
 
-        // Probe 1: Brave Browser & AdGuard object detection
+        // Probe 1: Brave & AdGuard
         try {
-            if (typeof window !== "undefined" && "adguard" in window) {
-                setIsAdBlockerActive(true);
-                return;
-            }
-            if (typeof navigator !== "undefined" && (navigator as any).brave?.isBrave) {
-                const isBrave = await (navigator as any).brave.isBrave();
-                if (isBrave) {
-                    setIsAdBlockerActive(true);
-                    return;
-                }
-            }
-        } catch {
-            // Ignore error and continue probing
-        }
+            if (typeof window !== "undefined" && "adguard" in window) return setIsAdBlockerActive(true);
+            if (typeof navigator !== "undefined" && await (navigator as any).brave?.isBrave?.()) return setIsAdBlockerActive(true);
+        } catch {}
 
-        // Probe 2: Script Tag Load Failure / uBlock Origin Stubbing
+        // Probe 2: Script Tag Load / uBlock Stubbing
         const scriptBlocked = await new Promise<boolean>((resolve) => {
             if (typeof document === "undefined") return resolve(false);
             const script = document.createElement("script");
             script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?t=" + Date.now();
             script.async = true;
 
-            const timeout = setTimeout(() => {
-                script.remove();
-                resolve(false);
-            }, 1500);
-
-            script.onerror = () => {
-                clearTimeout(timeout);
-                script.remove();
-                resolve(true);
-            };
-            script.onload = () => {
-                clearTimeout(timeout);
-                script.remove();
-                // If uBlock stubbed the script, window.adsbygoogle won't be initialized as expected
-                resolve(!("adsbygoogle" in window));
-            };
-
+            const t = setTimeout(() => { script.remove(); resolve(false); }, 1500);
+            script.onerror = () => { clearTimeout(t); script.remove(); resolve(true); };
+            script.onload = () => { clearTimeout(t); script.remove(); resolve(!("adsbygoogle" in window)); };
             document.head.appendChild(script);
         });
 
-        if (scriptBlocked) {
-            isBlocked = true;
-        }
+        if (scriptBlocked) isBlocked = true;
 
-        // Probe 3: Fetch Probing against known ad & popunder domains
+        // Probe 3: Parallel Fetch Probing against known ad trackers
         if (!isBlocked) {
             const trackerUrls = [
                 "https://static.popads.net/pop.js",
                 "https://securepubads.g.doubleclick.net/tag/js/gpt.js",
                 "https://adservice.google.com/adsid/integrator.js",
             ];
-            for (const url of trackerUrls) {
-                try {
-                    await fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" });
-                } catch {
-                    isBlocked = true;
-                    break;
-                }
-            }
+            const fetchResults = await Promise.all(
+                trackerUrls.map((url) => fetch(url, { method: "GET", mode: "no-cors", cache: "no-store" }).then(() => false).catch(() => true))
+            );
+            if (fetchResults.some(Boolean)) isBlocked = true;
         }
 
         // Probe 4: DOM Cosmetic Filter Detection
@@ -91,16 +60,10 @@ export default function AdBlockEnforcer({ children }: AdBlockEnforcerProps) {
             bait.style.cssText = "width: 100px; height: 100px; opacity: 0.01; position: absolute; top: -1000px; left: -1000px; pointer-events: none;";
             bait.setAttribute("aria-hidden", "true");
             document.body.appendChild(bait);
-
             await new Promise((r) => setTimeout(r, 60));
 
-            const style = window.getComputedStyle(bait);
-            if (
-                style.display === "none" ||
-                style.visibility === "hidden" ||
-                bait.offsetHeight === 0 ||
-                bait.clientHeight === 0
-            ) {
+            const s = window.getComputedStyle(bait);
+            if (s.display === "none" || s.visibility === "hidden" || bait.offsetHeight === 0 || bait.clientHeight === 0) {
                 isBlocked = true;
             }
             bait.remove();

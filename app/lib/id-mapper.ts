@@ -3,7 +3,6 @@ const ANIME_LIST_URL =
 
 interface AnimeListEntry {
   anilist_id?: number;
-  mal_id?: number;
   imdb_id?: string[];
   themoviedb_id?: { tv?: number; movie?: number };
   season?: { tvdb?: number; tmdb?: number };
@@ -14,15 +13,11 @@ interface AnimeListEntry {
 export interface AnimeMapping {
   imdbId: string;
   tmdbId?: number;
-  /** The TMDB season number (e.g. Grand Blue S3 → season 3) */
   season: number;
   type: string;
 }
 
-/** Module-level cache: anilist_id → mapping info */
 const cache = new Map<number, AnimeMapping>();
-
-/** Singleton promise so the remote list is fetched at most once. */
 let loadPromise: Promise<void> | null = null;
 
 async function loadMappings(): Promise<void> {
@@ -31,57 +26,34 @@ async function loadMappings(): Promise<void> {
   loadPromise = (async () => {
     try {
       const res = await fetch(ANIME_LIST_URL);
-
-      if (!res.ok) {
-        throw new Error(`Failed to fetch anime-list: ${res.status} ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`Failed to fetch anime-list: ${res.status}`);
 
       const entries: AnimeListEntry[] = await res.json();
-
       for (const entry of entries) {
-        if (
-          entry.anilist_id != null &&
-          Array.isArray(entry.imdb_id) &&
-          entry.imdb_id.length > 0
-        ) {
-          const tvdbSeason = entry.season?.tvdb;
-          const tmdbSeason = entry.season?.tmdb;
-          const season = (tvdbSeason != null && tvdbSeason > 0 ? tvdbSeason : tmdbSeason) ?? 1;
-
+        if (entry.anilist_id != null && entry.imdb_id?.[0]) {
+          const s = entry.season?.tvdb || entry.season?.tmdb;
           cache.set(entry.anilist_id, {
             imdbId: entry.imdb_id[0],
             tmdbId: entry.themoviedb_id?.tv ?? entry.themoviedb_id?.movie,
-            season,
+            season: s && s > 0 ? s : 1,
             type: entry.type ?? "TV",
           });
         }
       }
     } catch (err) {
-      // Reset so a subsequent call can retry after a transient failure.
       loadPromise = null;
-      console.error("[id-mapper] Error loading anime-list mappings:", err);
+      console.error("[id-mapper] Error loading mappings:", err);
     }
   })();
 
   return loadPromise;
 }
 
-/**
- * Resolve an AniList ID to its IMDB ID, TMDB season number, and type.
- * Returns `null` when no mapping exists or the remote list could not be loaded.
- */
-export async function getAnimeMapping(
-  anilistId: number | string,
-): Promise<AnimeMapping | null> {
+export async function getAnimeMapping(anilistId: number | string): Promise<AnimeMapping | null> {
   try {
     await loadMappings();
-
-    const numericId =
-      typeof anilistId === "string" ? parseInt(anilistId, 10) : anilistId;
-
-    if (Number.isNaN(numericId)) return null;
-
-    return cache.get(numericId) ?? null;
+    const numId = Number(anilistId);
+    return Number.isNaN(numId) ? null : cache.get(numId) ?? null;
   } catch {
     return null;
   }

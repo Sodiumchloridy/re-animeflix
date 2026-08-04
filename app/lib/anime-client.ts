@@ -3,13 +3,11 @@ import { getAnimeMapping } from "./id-mapper";
 
 const ANILIST_API = "https://graphql.anilist.co";
 
-const getMediaTitle = (titleObj?: { english?: string; romaji?: string; native?: string }): string => {
-    return titleObj?.english || titleObj?.romaji || titleObj?.native || "Unknown Title";
-};
+const getMediaTitle = (t?: { english?: string; romaji?: string; native?: string }) =>
+    t?.english || t?.romaji || t?.native || "Unknown Title";
 
-const getMediaCover = (coverObj?: { extraLarge?: string; large?: string }): string => {
-    return coverObj?.extraLarge || coverObj?.large || "";
-};
+const getMediaCover = (c?: { extraLarge?: string; large?: string }) =>
+    c?.extraLarge || c?.large || "";
 
 async function anilistGraphQL(query: string, variables: Record<string, unknown> = {}) {
     const res = await fetch(ANILIST_API, {
@@ -17,13 +15,9 @@ async function anilistGraphQL(query: string, variables: Record<string, unknown> 
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ query, variables }),
     });
-    if (!res.ok) {
-        throw new Error(`AniList API responded with status ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`AniList API responded with status ${res.status}`);
     const json = await res.json();
-    if (json.errors) {
-        throw new Error(json.errors[0]?.message || "AniList GraphQL Error");
-    }
+    if (json.errors) throw new Error(json.errors[0]?.message || "AniList GraphQL Error");
     return json.data;
 }
 
@@ -33,8 +27,7 @@ const safeCache = async <T>(
     options?: { revalidate?: number | false; tags?: string[] }
 ): Promise<T> => {
     try {
-        const fetchCached = unstable_cache(fn, keyParts, options);
-        return await fetchCached();
+        return await unstable_cache(fn, keyParts, options)();
     } catch {
         return await fn();
     }
@@ -44,105 +37,49 @@ export const getAnimeInfo = async (id: string) => {
     return safeCache(
         async () => {
             const isNumeric = /^\d+$/.test(id);
-            const mediaFields = `
-                id
-                idMal
-                title { english romaji native }
-                coverImage { extraLarge large }
-                bannerImage
-                description
-                status
-                genres
-                episodes
-                format
-                nextAiringEpisode { episode }
-                streamingEpisodes { title url }
-                relations {
-                    edges {
-                        relationType
-                        node {
-                            id
-                            title { english romaji native }
-                            coverImage { extraLarge large }
-                            format
-                            status
-                            type
-                        }
-                    }
-                }
-            `;
+            const mediaFields = `id idMal title { english romaji native } coverImage { extraLarge large } bannerImage description status genres episodes format nextAiringEpisode { episode } streamingEpisodes { title url } relations { edges { relationType node { id title { english romaji native } coverImage { extraLarge large } format status type } } }`;
             const query = isNumeric
                 ? `query ($id: Int) { Media (id: $id, type: ANIME) { ${mediaFields} } }`
                 : `query ($search: String) { Media (search: $search, type: ANIME) { ${mediaFields} } }`;
 
-            const variables = isNumeric ? { id: parseInt(id, 10) } : { search: id };
-            const data = await anilistGraphQL(query, variables);
+            const data = await anilistGraphQL(query, isNumeric ? { id: parseInt(id, 10) } : { search: id });
             const media = data?.Media;
             if (!media) return null;
 
-            // Map streaming episode titles by episode number
             const streamEpMap = new Map<number, string>();
             if (media.streamingEpisodes) {
                 for (const ep of media.streamingEpisodes) {
                     const match = ep.title?.match(/Episode\s+(\d+)/i);
-                    if (match) {
-                        streamEpMap.set(parseInt(match[1], 10), ep.title);
-                    }
+                    if (match) streamEpMap.set(parseInt(match[1], 10), ep.title);
                 }
             }
+            const maxStreamEp = streamEpMap.size > 0 ? Math.max(...Array.from(streamEpMap.keys())) : 0;
 
-            let maxStreamEp = 0;
-            if (streamEpMap.size > 0) {
-                maxStreamEp = Math.max(...Array.from(streamEpMap.keys()));
-            }
-
-            // Calculate aired episodes count based on release status
-            let totalEp = media.episodes;
-            let airedEp = totalEp;
-
+            let airedEp = media.episodes;
             if (media.status === "RELEASING") {
-                if (media.nextAiringEpisode?.episode) {
-                    airedEp = media.nextAiringEpisode.episode - 1;
-                } else if (maxStreamEp > 0) {
-                    airedEp = maxStreamEp;
-                } else {
-                    airedEp = media.episodes || 1;
-                }
+                airedEp = media.nextAiringEpisode?.episode ? media.nextAiringEpisode.episode - 1 : maxStreamEp || media.episodes || 1;
             } else if (media.status === "NOT_YET_RELEASED") {
                 airedEp = 0;
-            } else {
-                if (!airedEp) {
-                    if (maxStreamEp > 0) {
-                        airedEp = maxStreamEp;
-                    } else if (["MOVIE", "ONE_SHOT", "MUSIC"].includes(media.format)) {
-                        airedEp = 1;
-                    } else {
-                        airedEp = 12;
-                    }
-                }
+            } else if (!airedEp) {
+                airedEp = maxStreamEp || (["MOVIE", "ONE_SHOT", "MUSIC"].includes(media.format) ? 1 : 12);
             }
             airedEp = Math.max(airedEp, 0);
 
-            const episodesList = Array.from({ length: airedEp }, (_, i) => {
-                const epNum = i + 1;
-                const streamTitle = streamEpMap.get(epNum);
-                return {
-                    id: `${media.id}-${epNum}`,
-                    number: epNum,
-                    title: streamTitle || `Episode ${epNum}`,
-                };
-            });
+            const episodesList = Array.from({ length: airedEp }, (_, i) => ({
+                id: `${media.id}-${i + 1}`,
+                number: i + 1,
+                title: streamEpMap.get(i + 1) || `Episode ${i + 1}`,
+            }));
 
-            // Map related anime seasons
             const relationsList = (media.relations?.edges || [])
-                .filter((edge: any) => edge.node && edge.node.type === "ANIME")
-                .map((edge: any) => ({
-                    id: String(edge.node.id),
-                    title: getMediaTitle(edge.node.title),
-                    image: getMediaCover(edge.node.coverImage),
-                    relationType: edge.relationType,
-                    type: edge.node.format || "TV",
-                    status: edge.node.status,
+                .filter((e: any) => e.node?.type === "ANIME")
+                .map((e: any) => ({
+                    id: String(e.node.id),
+                    title: getMediaTitle(e.node.title),
+                    image: getMediaCover(e.node.coverImage),
+                    relationType: e.relationType,
+                    type: e.node.format || "TV",
+                    status: e.node.status,
                 }));
 
             return {
@@ -175,59 +112,26 @@ export const getEpisodeSources = async (
     anilistId?: string,
     episodeNum: number = 1
 ) => {
+    const numericId = anilistId || episodeId.split("-")[0] || "1535";
+    const mapping = await getAnimeMapping(numericId);
     const servers: EmbedServer[] = [];
 
-    const numericId = anilistId || episodeId.split("-")[0];
-    const mapping = numericId ? await getAnimeMapping(numericId) : null;
-
     if (mapping?.imdbId) {
-        const season = mapping.season ?? 1;
+        const s = mapping.season ?? 1;
         const isMovie = mapping.type === "MOVIE" || mapping.type === "Movie";
+        const imdb = mapping.imdbId;
 
-        // Server 1: VidSrc.to
-        servers.push({
-            id: "vidsrc-to",
-            name: "Server 1 (VidSrc.to)",
-            url: isMovie 
-                ? `https://vidsrc.to/embed/movie/${mapping.imdbId}?ds_lang=en`
-                : `https://vidsrc.to/embed/tv/${mapping.imdbId}/${season}/${episodeNum}?ds_lang=en`,
-            isEmbed: true,
-        });
-
-        // Server 2: VidSrc.me
-        servers.push({
-            id: "vidsrc-me",
-            name: "Server 2 (VidSrc.me)",
-            url: isMovie
-                ? `https://vidsrc.me/embed/movie/${mapping.imdbId}?ds_lang=en`
-                : `https://vidsrc.me/embed/tv/${mapping.imdbId}/${season}-${episodeNum}?ds_lang=en`,
-            isEmbed: true,
-        });
-
-        // Server 3: 2Embed
-        servers.push({
-            id: "2embed",
-            name: "Server 3 (2Embed)",
-            url: isMovie
-                ? `https://www.2embed.cc/embed/${mapping.imdbId}`
-                : `https://www.2embed.cc/embedtv/${mapping.imdbId}&s=${season}&e=${episodeNum}`,
-            isEmbed: true,
-        });
+        servers.push(
+            { id: "vidsrc-to", name: "Server 1 (VidSrc.to)", url: isMovie ? `https://vidsrc.to/embed/movie/${imdb}?ds_lang=en` : `https://vidsrc.to/embed/tv/${imdb}/${s}/${episodeNum}?ds_lang=en`, isEmbed: true },
+            { id: "vidsrc-me", name: "Server 2 (VidSrc.me)", url: isMovie ? `https://vidsrc.me/embed/movie/${imdb}?ds_lang=en` : `https://vidsrc.me/embed/tv/${imdb}/${s}-${episodeNum}?ds_lang=en`, isEmbed: true },
+            { id: "2embed", name: "Server 3 (2Embed)", url: isMovie ? `https://www.2embed.cc/embed/${imdb}` : `https://www.2embed.cc/embedtv/${imdb}&s=${s}&e=${episodeNum}`, isEmbed: true }
+        );
     } else {
-        // Fallback server if no IMDB ID mapping exists
-        const fallbackId = anilistId || episodeId.split("-")[0] || "1535";
-        servers.push({
-            id: "vidsrc-to-fallback",
-            name: "Server 1 (VidSrc.to)",
-            url: `https://vidsrc.to/embed/anime/${encodeURIComponent(fallbackId)}/${episodeNum}`,
-            isEmbed: true,
-        });
-        servers.push({
-            id: "vidsrc-me-fallback",
-            name: "Server 2 (VidSrc.me)",
-            url: `https://vidsrc.me/embed/anime/${encodeURIComponent(fallbackId)}/${episodeNum}`,
-            isEmbed: true,
-        });
+        const idEnc = encodeURIComponent(numericId);
+        servers.push(
+            { id: "vidsrc-to-fallback", name: "Server 1 (VidSrc.to)", url: `https://vidsrc.to/embed/anime/${idEnc}/${episodeNum}`, isEmbed: true },
+            { id: "vidsrc-me-fallback", name: "Server 2 (VidSrc.me)", url: `https://vidsrc.me/embed/anime/${idEnc}/${episodeNum}`, isEmbed: true }
+        );
     }
 
     const primary = servers[0];
@@ -239,30 +143,18 @@ export const getEpisodeSources = async (
 };
 
 export const searchAnime = async (query: string) => {
-    const gql = `query ($search: String) {
-        Page (page: 1, perPage: 24) {
-            media (search: $search, type: ANIME) {
-                id
-                title { english romaji native }
-                coverImage { extraLarge large }
-                genres
-                status
-                episodes
-                format
-            }
-        }
-    }`;
+    const gql = `query ($search: String) { Page (page: 1, perPage: 24) { media (search: $search, type: ANIME) { id title { english romaji native } coverImage { extraLarge large } genres status episodes format } } }`;
     const data = await anilistGraphQL(gql, { search: query });
     const results = (data?.Page?.media || [])
-        .filter((anime: any) => anime.format !== "ONA")
-        .map((anime: any) => ({
-            id: String(anime.id),
-            title: getMediaTitle(anime.title),
-            image: getMediaCover(anime.coverImage),
-            genres: anime.genres || [],
-            status: anime.status,
-            episodes: anime.episodes,
-            type: anime.format,
+        .filter((a: any) => a.format !== "ONA")
+        .map((a: any) => ({
+            id: String(a.id),
+            title: getMediaTitle(a.title),
+            image: getMediaCover(a.coverImage),
+            genres: a.genres || [],
+            status: a.status,
+            episodes: a.episodes,
+            type: a.format,
         }));
     return { results };
 };
@@ -270,31 +162,19 @@ export const searchAnime = async (query: string) => {
 export const fetchTopAiring = async () => {
     return safeCache(
         async () => {
-            const gql = `query {
-                Page (page: 1, perPage: 20) {
-                    media (type: ANIME, sort: TRENDING_DESC) {
-                        id
-                        title { english romaji native }
-                        coverImage { extraLarge large }
-                        genres
-                        status
-                        episodes
-                        format
-                    }
-                }
-            }`;
+            const gql = `query { Page (page: 1, perPage: 20) { media (type: ANIME, sort: TRENDING_DESC) { id title { english romaji native } coverImage { extraLarge large } genres status episodes format } } }`;
             const data = await anilistGraphQL(gql);
             const results = (data?.Page?.media || [])
-                .filter((anime: any) => anime.format !== "ONA")
-                .map((anime: any) => ({
-                    id: String(anime.id),
-                    title: getMediaTitle(anime.title),
-                    image: getMediaCover(anime.coverImage),
-                    genres: anime.genres || [],
-                    status: anime.status,
-                    episodeNumber: anime.episodes,
-                    episodeId: `${anime.id}-1`,
-                    type: anime.format,
+                .filter((a: any) => a.format !== "ONA")
+                .map((a: any) => ({
+                    id: String(a.id),
+                    title: getMediaTitle(a.title),
+                    image: getMediaCover(a.coverImage),
+                    genres: a.genres || [],
+                    status: a.status,
+                    episodeNumber: a.episodes,
+                    episodeId: `${a.id}-1`,
+                    type: a.format,
                 }));
             return { results };
         },
@@ -305,38 +185,22 @@ export const fetchTopAiring = async () => {
 
 export const fetchRecentEpisodes = async () => {
     const currentHour = Math.floor(Date.now() / (1000 * 60 * 60));
-
     return safeCache(
         async () => {
-            const gql = `query {
-                Page (page: 1, perPage: 30) {
-                    airingSchedules (sort: TIME_DESC, airingAt_lesser: ${Math.floor(Date.now() / 1000)}) {
-                        episode
-                        airingAt
-                        media {
-                            id
-                            title { english romaji native }
-                            coverImage { extraLarge large }
-                            genres
-                            status
-                            format
-                        }
-                    }
-                }
-            }`;
+            const gql = `query { Page (page: 1, perPage: 30) { airingSchedules (sort: TIME_DESC, airingAt_lesser: ${Math.floor(Date.now() / 1000)}) { episode airingAt media { id title { english romaji native } coverImage { extraLarge large } genres status format } } } }`;
             const data = await anilistGraphQL(gql);
             const results = (data?.Page?.airingSchedules || [])
-                .filter((item: any) => item.media && item.media.format !== "ONA")
-                .map((item: any) => ({
-                    id: String(item.media.id),
-                    title: getMediaTitle(item.media.title),
-                    image: getMediaCover(item.media.coverImage),
-                    genres: item.media.genres || [],
-                    status: item.media.status,
-                    episodeNumber: item.episode,
-                    episodeId: `${item.media.id}-${item.episode}`,
-                    airingAt: item.airingAt,
-                    type: item.media.format,
+                .filter((i: any) => i.media && i.media.format !== "ONA")
+                .map((i: any) => ({
+                    id: String(i.media.id),
+                    title: getMediaTitle(i.media.title),
+                    image: getMediaCover(i.media.coverImage),
+                    genres: i.media.genres || [],
+                    status: i.media.status,
+                    episodeNumber: i.episode,
+                    episodeId: `${i.media.id}-${i.episode}`,
+                    airingAt: i.airingAt,
+                    type: i.media.format,
                 }));
             return { results };
         },

@@ -10,16 +10,15 @@ export default async function Home() {
   const topAiring = await fetchTopAiring();
   const recentEpisodes = await fetchRecentEpisodes();
 
-  // Extract featured items for HeroCarousel
-  const featuredList = topAiring.results.slice(0, 7).map((anime: any) => ({
-    id: anime.id,
-    title: anime.title,
-    image: anime.image,
-    bannerImage: anime.image,
-    genres: anime.genres,
-    type: anime.type,
-    episodes: anime.episodeNumber,
-    year: anime.year || 2026,
+  const featuredList = topAiring.results.slice(0, 7).map((a: any) => ({
+    id: a.id,
+    title: a.title,
+    image: a.image,
+    bannerImage: a.image,
+    genres: a.genres,
+    type: a.type,
+    episodes: a.episodeNumber,
+    year: a.year || 2026,
   }));
 
   return (

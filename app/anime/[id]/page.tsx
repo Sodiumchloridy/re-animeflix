@@ -6,6 +6,18 @@ import { redirect } from "next/navigation";
 import SynopsisText from "@/app/_components/SynopsisText";
 import EpisodeSelector from "@/app/_components/EpisodeSelector";
 
+const renderErrorState = (title: string, desc: string, isRed = false) => (
+  <div className="w-full flex justify-center py-20 text-zinc-100">
+    <div className="text-center max-w-md p-6 rounded-2xl bg-[#12151e] border border-white/10 space-y-3">
+      <h2 className={`text-lg font-bold ${isRed ? "text-red-400" : "text-zinc-200"}`}>{title}</h2>
+      <p className="text-xs text-zinc-400">{desc}</p>
+      <Link href="/" className="inline-block mt-4 text-xs font-semibold px-4 py-2 rounded-xl bg-purple-600 text-white">
+        Return Home
+      </Link>
+    </div>
+  </div>
+);
+
 export default async function AnimePage({
   params,
   searchParams,
@@ -20,44 +32,16 @@ export default async function AnimePage({
   try {
     animeInfo = await getAnimeInfo(id);
   } catch (e: any) {
-    const isRateLimit = e?.message?.includes("ratelimit");
-    return (
-      <div className="w-full flex justify-center py-20 text-zinc-100">
-        <div className="text-center max-w-md p-6 rounded-2xl bg-[#12151e] border border-white/10 space-y-3">
-          <h2 className="text-lg font-bold text-red-400">Unable to load anime info</h2>
-          {isRateLimit ? (
-            <p className="text-xs text-yellow-300">
-              We&apos;re being rate-limited by the data provider. Please wait a few minutes before trying again.
-            </p>
-          ) : (
-            <p className="text-xs text-zinc-400">The service may be temporarily unavailable. Please try again later.</p>
-          )}
-          <Link
-            href="/"
-            className="inline-block mt-4 text-xs font-semibold px-4 py-2 rounded-xl bg-purple-600 text-white"
-          >
-            Return to Home
-          </Link>
-        </div>
-      </div>
+    const isRate = e?.message?.includes("ratelimit");
+    return renderErrorState(
+      "Unable to load anime info",
+      isRate ? "We're being rate-limited. Please wait a few minutes." : "The service may be temporarily unavailable.",
+      true
     );
   }
 
   if (!animeInfo || !animeInfo.episodes?.length) {
-    return (
-      <div className="w-full flex justify-center py-20 text-zinc-100">
-        <div className="text-center max-w-md p-6 rounded-2xl bg-[#12151e] border border-white/10 space-y-3">
-          <h2 className="text-lg font-bold text-zinc-200">Anime Not Found</h2>
-          <p className="text-xs text-zinc-400">This anime title or episode release is unavailable.</p>
-          <Link
-            href="/"
-            className="inline-block mt-2 text-xs font-semibold px-4 py-2 rounded-xl bg-purple-600 text-white"
-          >
-            Return Home
-          </Link>
-        </div>
-      </div>
-    );
+    return renderErrorState("Anime Not Found", "This anime title or episode release is unavailable.");
   }
 
   const episodeNum = ep ? Number(ep) : 1;

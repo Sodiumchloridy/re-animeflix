@@ -21,45 +21,36 @@ export default function HeaderSearch() {
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Keyboard shortcut Ctrl+K / Cmd+K focus
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        const inputElem = document.getElementById("main-search-input");
-        if (inputElem) {
-          inputElem.focus();
-        }
+        document.getElementById("main-search-input")?.focus();
       }
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setIsOpen(false);
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  // Close dropdown on click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
-  // Debounced fetch search results (300ms delay after typing stops)
   useEffect(() => {
-    if (!query.trim() || query.trim().length < 2) {
+    const q = query.trim();
+    if (q.length < 2) {
       setResults([]);
       setIsLoading(false);
       setIsOpen(false);
       return;
     }
-
     setIsLoading(true);
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?query=${encodeURIComponent(query.trim())}`);
+        const res = await fetch(`/api/search?query=${encodeURIComponent(q)}`);
         if (res.ok) {
           const data = await res.json();
           setResults(data.results || []);
@@ -71,7 +62,6 @@ export default function HeaderSearch() {
         setIsLoading(false);
       }
     }, 300);
-
     return () => clearTimeout(timer);
   }, [query]);
 

@@ -1,13 +1,19 @@
 import { NextResponse } from 'next/server';
 
+const CORS_HEADERS = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Expose-Headers': '*',
+};
+
+const getReferer = (urlStr: string, origin: string) =>
+    /hub26link|dev23app|pro25zone|kwik\.cx/.test(urlStr) ? 'https://kwik.cx/' : origin || 'https://kwik.cx/';
+
 export async function GET(request: Request) {
     try {
-        const url = new URL(request.url);
-        const videoUrl = url.searchParams.get('url');
-
-        if (!videoUrl) {
-            return new NextResponse('Missing URL parameter', { status: 400 });
-        }
+        const videoUrl = new URL(request.url).searchParams.get('url');
+        if (!videoUrl) return new NextResponse('Missing URL parameter', { status: 400 });
 
         const decodedUrl = decodeURIComponent(videoUrl);
         let parsedUrl: URL;
@@ -17,16 +23,9 @@ export async function GET(request: Request) {
             return new NextResponse('Invalid URL parameter', { status: 400 });
         }
 
-        if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+        if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
             return new NextResponse('Unsupported URL protocol', { status: 400 });
         }
-        // Determine the referer based on the URL domain
-        const getReferer = (urlStr: string, origin: string) => {
-            if (urlStr.includes('hub26link.site') || urlStr.includes('dev23app.site') || urlStr.includes('pro25zone.site') || urlStr.includes('kwik.cx')) {
-                return 'https://kwik.cx/';
-            }
-            return origin || 'https://kwik.cx/';
-        };
 
         const response = await fetch(decodedUrl, {
             headers: {
@@ -37,61 +36,33 @@ export async function GET(request: Request) {
         });
 
         if (!response.ok) {
-            return new NextResponse(`Upstream server error: ${response.statusText}`, {
-                status: response.status
-            });
+            return new NextResponse(`Upstream server error: ${response.statusText}`, { status: response.status });
         }
 
-        // If it's an M3U8 file, we need to modify the contents
-        if (response.headers.get('Content-Type')?.includes('application/vnd.apple.mpegurl')) {
+        const contentType = response.headers.get('Content-Type') || '';
+        if (contentType.includes('application/vnd.apple.mpegurl')) {
             const text = await response.text();
             const baseUrl = parsedUrl.origin;
-            const pathParts = parsedUrl.pathname.split('/');
-            pathParts.pop(); // Remove the filename
-            const basePath = pathParts.join('/');
+            const basePath = parsedUrl.pathname.split('/').slice(0, -1).join('/');
 
             const toProxyUrl = (match: string) => {
-                const absoluteUrl = match.startsWith('http')
-                    ? match
-                    : match.startsWith('/')
-                        ? `${baseUrl}${match}`
-                        : `${baseUrl}${basePath}/${match}`;
-                return `/api/proxy?url=${encodeURIComponent(absoluteUrl)}`;
+                const abs = match.startsWith('http') ? match : match.startsWith('/') ? `${baseUrl}${match}` : `${baseUrl}${basePath}/${match}`;
+                return `/api/proxy?url=${encodeURIComponent(abs)}`;
             };
 
-            // Replace all segment URLs - match any non-comment, non-empty line that looks like a URL/path
-            let modifiedContent = text.replace(/^(?!#)([^\s#]+\.(m3u8|ts|js|jpg|gif|jpeg|png|webp|mp4|aac))$/gm, toProxyUrl);
-
-            // Also catch any line that's a full http URL (for variant playlists)
-            modifiedContent = modifiedContent.replace(/^(?!#)(https?:\/\/[^\s#]+)$/gm, toProxyUrl);
-
-            // Intercept decryption keys embedded inside #EXT-X-KEY tags
-            modifiedContent = modifiedContent.replace(/URI="([^"]+)"/g, (match, uri) => {
-                if (uri.startsWith('data:')) return match;
-                return `URI="${toProxyUrl(uri)}"`;
-            });
+            const modifiedContent = text
+                .replace(/^(?!#)([^\s#]+\.(m3u8|ts|js|jpg|gif|jpeg|png|webp|mp4|aac))$/gm, toProxyUrl)
+                .replace(/^(?!#)(https?:\/\/[^\s#]+)$/gm, toProxyUrl)
+                .replace(/URI="([^"]+)"/g, (m, uri) => uri.startsWith('data:') ? m : `URI="${toProxyUrl(uri)}"`);
 
             return new NextResponse(modifiedContent, {
-                headers: {
-                    'Content-Type': 'application/vnd.apple.mpegurl',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                    'Access-Control-Allow-Headers': '*',
-                    'Access-Control-Expose-Headers': '*',
-                },
+                headers: { ...CORS_HEADERS, 'Content-Type': 'application/vnd.apple.mpegurl' },
             });
         }
 
-        // For non-M3U8 files (video segments), return as blob with proper headers
         const data = await response.blob();
         return new NextResponse(data, {
-            headers: {
-                'Content-Type': response.headers.get('Content-Type') || 'application/octet-stream',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                'Access-Control-Allow-Headers': '*',
-                'Access-Control-Expose-Headers': '*',
-            },
+            headers: { ...CORS_HEADERS, 'Content-Type': contentType || 'application/octet-stream' },
         });
     } catch (error) {
         console.error('Proxy error:', error);

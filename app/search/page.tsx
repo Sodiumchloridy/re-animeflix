@@ -9,12 +9,8 @@ export default async function Search({
 }) {
   const { query: rawQuery } = await searchParams;
   const query = rawQuery ? decodeURIComponent(rawQuery).trim() : "";
-
-  const isCatalog = !query || query.toLowerCase() === "trending" || query.toLowerCase() === "catalog";
-
-  const searchResponse = isCatalog
-    ? await fetchTopAiring()
-    : await searchAnime(query);
+  const isCatalog = !query || ["trending", "catalog"].includes(query.toLowerCase());
+  const searchResponse = isCatalog ? await fetchTopAiring() : await searchAnime(query);
 
   return (
     <div className="w-full flex-1 animate-in fade-in duration-500 space-y-6">

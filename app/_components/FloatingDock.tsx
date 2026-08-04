@@ -7,27 +7,14 @@ export default function FloatingDock() {
   const [showTopBtn, setShowTopBtn] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowTopBtn(true);
-      } else {
-        setShowTopBtn(false);
-      }
-    };
+    const handleScroll = () => setShowTopBtn(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const focusSearch = () => {
-    const searchInput = document.getElementById("main-search-input");
-    if (searchInput) {
-      searchInput.focus();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    document.getElementById("main-search-input")?.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -62,7 +49,7 @@ export default function FloatingDock() {
       {/* Back to Top */}
       {showTopBtn && (
         <button
-          onClick={scrollToTop}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="p-2 rounded-full text-purple-400 hover:text-purple-300 hover:bg-purple-500/20 transition-all"
           aria-label="Scroll to top"
           title="Scroll to Top"

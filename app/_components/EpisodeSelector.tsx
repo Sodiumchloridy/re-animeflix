@@ -27,41 +27,26 @@ export default function EpisodeSelector({
   const chunkSize = 50;
   const isLargeSeries = episodes.length > chunkSize;
 
-  // Calculate episode range chunks if anime has > 50 episodes
   const rangeChunks = useMemo(() => {
     if (!isLargeSeries) return [];
-    const chunks = [];
-    for (let i = 0; i < episodes.length; i += chunkSize) {
-      const end = Math.min(i + chunkSize, episodes.length);
-      chunks.push({ start: i + 1, end, items: episodes.slice(i, end) });
-    }
-    return chunks;
+    return Array.from({ length: Math.ceil(episodes.length / chunkSize) }, (_, i) => {
+      const start = i * chunkSize + 1;
+      const end = Math.min((i + 1) * chunkSize, episodes.length);
+      return { start, end, items: episodes.slice(i * chunkSize, end) };
+    });
   }, [episodes, isLargeSeries]);
 
-  // Set default range to contain current episode
   useEffect(() => {
     if (isLargeSeries && rangeChunks.length > 0) {
-      const idx = rangeChunks.findIndex(
-        (chunk) => currentEpNumber >= chunk.start && currentEpNumber <= chunk.end
-      );
+      const idx = rangeChunks.findIndex((c) => currentEpNumber >= c.start && currentEpNumber <= c.end);
       if (idx !== -1) setSelectedRangeIndex(idx);
     }
   }, [currentEpNumber, isLargeSeries, rangeChunks]);
 
-  // Filter episodes by search query
   const filteredEpisodes = useMemo(() => {
-    if (!searchQuery.trim()) {
-      if (isLargeSeries && rangeChunks[selectedRangeIndex]) {
-        return rangeChunks[selectedRangeIndex].items;
-      }
-      return episodes;
-    }
     const q = searchQuery.toLowerCase().trim();
-    return episodes.filter(
-      (ep) =>
-        String(ep.number).includes(q) ||
-        ep.title.toLowerCase().includes(q)
-    );
+    if (!q) return isLargeSeries ? rangeChunks[selectedRangeIndex]?.items || episodes : episodes;
+    return episodes.filter((ep) => String(ep.number).includes(q) || ep.title.toLowerCase().includes(q));
   }, [episodes, searchQuery, isLargeSeries, rangeChunks, selectedRangeIndex]);
 
   return (
