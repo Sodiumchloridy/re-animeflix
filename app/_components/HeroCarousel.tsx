@@ -68,7 +68,7 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
       </div>
 
       {/* 3D Fanned Cards Section (LunarAnime inspired) */}
-      <div className="relative z-10 w-full max-w-2xl h-52 sm:h-60 my-4 flex items-center justify-center perspective-1000">
+      <div className="relative z-10 w-full max-w-2xl h-52 sm:h-60 my-4 flex items-center justify-center [perspective:1000px]">
         {items.map((item, index) => {
           const offset = getCardOffset(index);
           const isVisible = Math.abs(offset) <= 3;
