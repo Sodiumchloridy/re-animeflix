@@ -1,38 +1,47 @@
 # Animeflix
-An anime discovery, streaming site. And of course, does not comply to DMCA. Built with NextJS and Tailwind CSS. Due to legal reasons, this site does not store any copyrighted files on its server. All contents are provided by non-affiliated third parties.
 
-<img width="1881" height="1212" alt="image" src="https://github.com/user-attachments/assets/b5daf0da-7889-4a6e-a575-3262afb5a06e" />
+Animeflix is a web application for discovering and streaming anime, built with Next.js, React, and Tailwind CSS.
+
+> **Disclaimer:** This project does not host or store any copyrighted files on its servers. All content and video streams are sourced from non-affiliated third-party providers.
+
+<img width="1881" height="1212" alt="Animeflix Interface Preview" src="https://github.com/user-attachments/assets/b5daf0da-7889-4a6e-a575-3262afb5a06e" />
 
 https://github.com/user-attachments/assets/9a2d4f37-27fc-4fe1-b0c6-5a29fadec55c
 
+> [!WARNING]
+> **Notice:** Not all anime titles are currently available, and video stream fetching may occasionally fail or experience playback issues due to third-party API dependencies.
+
 ## Features
-- 📱 Responsive design for all devices
-- 🎨 Modern UI with Tailwind CSS
-- 🚀 Fast page loads with Next.js App Router
-- 😊 More emojis cause why not
+
+- Modern interface styled with Tailwind CSS
+- Anime discovery and metadata powered by AniList API
+- Embedded video playback powered by Video.js
+- Responsive design optimized for desktop and mobile devices
 
 ## Getting Started
-To install the required dependencies:
-```bash
-npm install
-```
 
-To run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Prerequisites
 
-To build the project:
+- **Node.js**: 18.0 or higher
+
+### Installation & Development
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open `http://localhost:3000` in your browser.
+
+### Production Build
+
 ```bash
 npm run build
+npm run start
 ```
 
-## Prerequisites
-Before you begin, ensure you have:
-- Node.js 18+ installed
