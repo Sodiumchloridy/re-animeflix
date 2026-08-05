@@ -1,15 +1,13 @@
 # Animeflix
-An anime discovery, streaming site. Ad-free. And of course, does not comply to DMCA. Built with NextJS and Tailwind CSS. Due to legal reasons, this site does not store any copyrighted files on its server. All contents are provided by non-affiliated third parties.
+An anime discovery, streaming site. And of course, does not comply to DMCA. Built with NextJS and Tailwind CSS. Due to legal reasons, this site does not store any copyrighted files on its server. All contents are provided by non-affiliated third parties.
 
-![Animeflix Screenshot](https://github.com/Sodiumchloridy/re-animeflix/assets/67376832/f05b6abe-3678-4090-b73e-20f01d5e51a8)
+<img width="1881" height="1212" alt="image" src="https://github.com/user-attachments/assets/b5daf0da-7889-4a6e-a575-3262afb5a06e" />
+
+https://github.com/user-attachments/assets/9a2d4f37-27fc-4fe1-b0c6-5a29fadec55c
 
 ## Features
-- 🎯 Ad-free streaming experience
 - 📱 Responsive design for all devices
 - 🎨 Modern UI with Tailwind CSS
-- 🔐 User authentication
-- ❤️ Personal watch list
-- 🎬 HLS video streaming support
 - 🚀 Fast page loads with Next.js App Router
 - 😊 More emojis cause why not
 
