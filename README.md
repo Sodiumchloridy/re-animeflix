@@ -36,12 +36,3 @@ npm run build
 ## Prerequisites
 Before you begin, ensure you have:
 - Node.js 18+ installed
-- MongoDB instance running
-- Environment variables configured
-
-## Environment Variables
-Create a `.env` file in the root directory with:
-```
-MONGODB_URI=your_mongodb_connection_string
-NEXTAUTH_SECRET=your_nextauth_secret
-```
